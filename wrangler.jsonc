@@ -1,0 +1,38 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "couple-quest",
+  "main": ".open-next/worker.js",
+  "compatibility_date": "2025-06-01",
+  "compatibility_flags": ["nodejs_compat", "global_fetch_strictly_public"],
+  "assets": {
+    "directory": ".open-next/assets",
+    "binding": "ASSETS"
+  },
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "couple-quest",
+      // 本地开发用占位 id 即可；首次部署前运行
+      // `wrangler d1 create couple-quest` 并把返回的 id 填到这里
+      "database_id": "00000000-0000-0000-0000-000000000000",
+      "migrations_dir": "drizzle"
+    }
+  ],
+  "r2_buckets": [
+    {
+      "binding": "PHOTOS",
+      // 部署前 `wrangler r2 bucket create couple-quest-photos`
+      "bucket_name": "couple-quest-photos"
+    }
+  ],
+  "vars": {
+    // Passkey 绑定的域名（rpID）。部署后改成真实域名，例如
+    // couple-quest.<你的子域>.workers.dev；一旦有人注册了 Passkey 就别再改
+    "RP_ID": "localhost",
+    "RP_ORIGIN": "http://localhost:3000",
+    "RP_NAME": "Couple Quest"
+  }
+  // SESSION_SECRET / BOOTSTRAP_SECRET 不放这里：
+  //   本地开发写在 .dev.vars
+  //   生产环境 `wrangler secret put <名字>`
+}
