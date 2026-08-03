@@ -15,14 +15,14 @@
 ## 本地开发
 
 ```bash
-pnpm install
-pnpm db:migrate:local   # 建本地 D1 表（首次 & 每次 schema 变更后）
-pnpm dev                # http://localhost:3000
+npm install
+npm run db:migrate:local   # 建本地 D1 表（首次 & 每次 schema 变更后）
+npm run dev                # http://localhost:3000
 ```
 
 首次打开会进入 /setup，一次性创建两个人的账号（本地初始化口令见 `.dev.vars`）。
 
-改了 `db/schema.ts` 后：`pnpm db:generate && pnpm db:migrate:local`。
+改了 `db/schema.ts` 后：`npm run db:generate && npm run db:migrate:local`。
 
 界面手机和电脑都适配：窄屏是底部四个 tab，宽屏自动换成左侧导航栏。
 
@@ -31,7 +31,7 @@ pnpm dev                # http://localhost:3000
 先授权 Cloudflare（会开浏览器）：
 
 ```bash
-pnpm exec wrangler login
+npx wrangler login
 ```
 
 然后一条命令跑完：建 D1、建 R2、生成并写入两个密钥、建表、部署、
@@ -58,8 +58,8 @@ pnpm exec wrangler login
 ## 日常发版
 
 ```bash
-pnpm deploy                 # 代码变更
-pnpm db:migrate:remote      # 仅当有新迁移
+npm run deploy                 # 代码变更
+npm run db:migrate:remote      # 仅当有新迁移
 ```
 
 ## 备份
@@ -67,5 +67,5 @@ pnpm db:migrate:remote      # 仅当有新迁移
 D1 导出（建议偶尔跑一次存好）：
 
 ```bash
-pnpm wrangler d1 export couple-quest --remote --output backup.sql
+npx wrangler d1 export couple-quest --remote --output backup.sql
 ```

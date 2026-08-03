@@ -8,7 +8,16 @@ set -euo pipefail
 cd "$(dirname "$0")/.."
 
 CUSTOM_DOMAIN="${1:-}"
-WRANGLER="pnpm exec wrangler"
+
+# 包管理器按可用性探测：pnpm 可能只装在某个 node 版本下而不在 PATH 上
+if command -v pnpm > /dev/null 2>&1; then
+  WRANGLER="pnpm exec wrangler"
+  RUN="pnpm run"
+else
+  WRANGLER="npx wrangler"
+  RUN="npm run"
+fi
+
 CFG=wrangler.jsonc
 DB_NAME=couple-quest
 BUCKET=couple-quest-photos
@@ -19,7 +28,7 @@ die() { printf '\n\033[1;31m✗ %s\033[0m\n' "$1" >&2; exit 1; }
 # ---------------------------------------------------------------- 0. 前置检查
 say "检查 Cloudflare 登录状态"
 $WRANGLER whoami 2>&1 | grep -q "not authenticated" && \
-  die "还没登录。先跑 pnpm exec wrangler login，授权后再执行本脚本。"
+  die "还没登录。先跑 $WRANGLER login，授权后再执行本脚本。"
 echo "已登录。"
 
 # ---------------------------------------------------------------- 1. D1
@@ -76,10 +85,10 @@ if [ -n "$CUSTOM_DOMAIN" ]; then
   say "使用自定义域名 $DOMAIN"
 else
   say "首次部署，拿 workers.dev 域名"
-  out=$(pnpm run deploy 2>&1)
+  out=$($RUN deploy 2>&1)
   printf '%s\n' "$out"
   DOMAIN=$(printf '%s' "$out" | grep -oE 'https://[a-z0-9.-]+\.workers\.dev' | head -1 | sed 's|https://||')
-  [ -n "$DOMAIN" ] || die "没能从部署输出里识别出域名，手动把 RP_ID/RP_ORIGIN 填进 $CFG 后再跑 pnpm run deploy"
+  [ -n "$DOMAIN" ] || die "没能从部署输出里识别出域名，手动把 RP_ID/RP_ORIGIN 填进 $CFG 后再跑 $RUN deploy"
 fi
 
 say "把 Passkey 域名固定为 $DOMAIN"
@@ -89,7 +98,7 @@ echo "已写入 $CFG。"
 
 # ---------------------------------------------------------------- 6. 正式部署
 say "部署"
-pnpm run deploy
+$RUN deploy
 
 # ---------------------------------------------------------------- 完成
 printf '\n\033[1;32m════════════════ 部署完成 ════════════════\033[0m\n\n'
@@ -106,5 +115,5 @@ cat <<EOF
   ⚠ RP_ID 已固定为 $DOMAIN。之后换域名的话，
     两个人的面容登录都要重新绑定一次。
 
-  改完代码重新发版：pnpm run deploy
+  改完代码重新发版：$RUN deploy
 EOF
