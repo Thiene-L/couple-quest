@@ -4,8 +4,11 @@
   "main": ".open-next/worker.js",
   "compatibility_date": "2025-06-01",
   "compatibility_flags": ["nodejs_compat", "global_fetch_strictly_public"],
-  // 发布到 <name>.<你的子域>.workers.dev
+  // workers.dev 地址留着当备用入口
   "workers_dev": true,
+  // 正式入口。custom_domain 会让 Cloudflare 自动建 DNS 记录并签证书，
+  // 前提是该域名的 zone 已在本账号下激活
+  "routes": [{ "pattern": "lovesmia.com", "custom_domain": true }],
   "assets": {
     "directory": ".open-next/assets",
     "binding": "ASSETS"
@@ -30,8 +33,8 @@
   "vars": {
     // Passkey 绑定的域名（rpID）。部署后改成真实域名，例如
     // couple-quest.<你的子域>.workers.dev；一旦有人注册了 Passkey 就别再改
-    "RP_ID": "couple-quest.beanlou.workers.dev",
-    "RP_ORIGIN": "https://couple-quest.beanlou.workers.dev",
+    "RP_ID": "lovesmia.com",
+    "RP_ORIGIN": "https://lovesmia.com",
     "RP_NAME": "Couple Quest"
   }
   // SESSION_SECRET / BOOTSTRAP_SECRET 不放这里：
