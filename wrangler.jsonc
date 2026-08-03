@@ -14,7 +14,7 @@
       "database_name": "couple-quest",
       // 本地开发用占位 id 即可；首次部署前运行
       // `wrangler d1 create couple-quest` 并把返回的 id 填到这里
-      "database_id": "00000000-0000-0000-0000-000000000000",
+      "database_id": "9a4ff66a-5786-413c-b2f7-af24fdcc5703",
       "migrations_dir": "drizzle"
     }
   ],

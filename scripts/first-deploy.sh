@@ -31,10 +31,23 @@ $WRANGLER whoami 2>&1 | grep -q "not authenticated" && \
   die "还没登录。先跑 $WRANGLER login，授权后再执行本脚本。"
 echo "已登录。"
 
+# 未验证邮箱的账号建不了任何资源，提前拦下来，别等到中途才炸
+check_email_verified() {
+  case "$1" in
+    *"verify your email"*|*"10034"*)
+      die "Cloudflare 账号邮箱还没验证，建不了资源。
+    去邮箱点验证链接（面板右上角头像 → My Profile 可重发），
+    验证完重新跑本脚本即可，已建好的资源不会重复创建。
+    说明：https://developers.cloudflare.com/fundamentals/setup/account/verify-email-address/"
+      ;;
+  esac
+}
+
 # ---------------------------------------------------------------- 1. D1
 say "准备 D1 数据库"
 if grep -q '"database_id": "00000000-0000-0000-0000-000000000000"' $CFG; then
   out=$($WRANGLER d1 create $DB_NAME 2>&1) || true
+  check_email_verified "$out"
   # 已存在时复用，否则从创建输出里取 id
   id=$(printf '%s' "$out" | grep -oE '[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}' | head -1)
   if [ -z "$id" ]; then
@@ -51,7 +64,24 @@ fi
 
 # ---------------------------------------------------------------- 2. R2
 say "准备 R2 存储桶（存打卡照片）"
-$WRANGLER r2 bucket create $BUCKET 2>&1 | tail -2 || echo "已存在，跳过。"
+# 只把「已存在」当成功，其余失败必须暴露出来，不能一律吞掉
+out=$($WRANGLER r2 bucket create $BUCKET 2>&1) || true
+check_email_verified "$out"
+if printf '%s' "$out" | grep -qiE "already (exists|owned)|10004"; then
+  echo "已存在，跳过。"
+elif printf '%s' "$out" | grep -q "10042"; then
+  die "R2 还没在 Cloudflare 面板里启用（打卡照片需要它）。
+    去 https://dash.cloudflare.com → 左侧 R2 → 点开通（要绑卡，
+    10GB 存储和出口流量都是免费额度内，不会扣钱），然后重跑本脚本。
+
+    不想绑卡的话，跟我说一声，可以把「打卡传照片」这个功能去掉，
+    其余功能不受影响，也就不再需要 R2。"
+elif printf '%s' "$out" | grep -qi "error"; then
+  printf '%s\n' "$out"
+  die "R2 存储桶创建失败，见上面的错误。"
+else
+  echo "创建成功。"
+fi
 
 # ---------------------------------------------------------------- 3. 密钥
 say "设置密钥"
@@ -66,7 +96,8 @@ fi
 
 BOOTSTRAP=""
 if printf '%s' "$existing" | grep -q BOOTSTRAP_SECRET; then
-  echo "BOOTSTRAP_SECRET 已存在，跳过（忘了的话去 Cloudflare 面板重设）。"
+  echo "BOOTSTRAP_SECRET 已存在，跳过。"
+  echo "  忘了值的话重设一个：$WRANGLER secret put BOOTSTRAP_SECRET"
 else
   BOOTSTRAP=$(openssl rand -hex 8)
   printf '%s' "$BOOTSTRAP" | $WRANGLER secret put BOOTSTRAP_SECRET
@@ -75,7 +106,8 @@ fi
 
 # ---------------------------------------------------------------- 4. 建表
 say "在线上数据库建表"
-$WRANGLER d1 migrations apply $DB_NAME --remote
+$WRANGLER d1 migrations apply $DB_NAME --remote || \
+  die "建表失败。确认 $CFG 里的 database_id 对应的库确实存在（$WRANGLER d1 list 可查）。"
 
 # ---------------------------------------------------------------- 5. 定域名
 # Passkey 永久绑定 RP_ID。自定义域名的话现在就能定；
