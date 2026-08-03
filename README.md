@@ -26,39 +26,34 @@ pnpm dev                # http://localhost:3000
 
 界面手机和电脑都适配：窄屏是底部四个 tab，宽屏自动换成左侧导航栏。
 
-## 首次部署（一次性）
+## 首次部署
 
-1. 登录：`pnpm wrangler login`
-2. 创建资源，并把返回的 id 填进 `wrangler.jsonc`：
-
-```bash
-pnpm wrangler d1 create couple-quest        # database_id 填到 d1_databases
-pnpm wrangler r2 bucket create couple-quest-photos
-```
-
-3. 设置两个密钥（都用随机长字符串）：
+先授权 Cloudflare（会开浏览器）：
 
 ```bash
-pnpm wrangler secret put SESSION_SECRET
-pnpm wrangler secret put BOOTSTRAP_SECRET
+pnpm exec wrangler login
 ```
 
-> `BOOTSTRAP_SECRET` 是初始化口令。`/setup` 页要求填对它才能创建账号——
-> 否则部署后到你本人打开之间，任何拿到网址的人都能先建号占领实例。
-
-4. 建表并部署：
+然后一条命令跑完：建 D1、建 R2、生成并写入两个密钥、建表、部署、
+回填 Passkey 域名、再部署。可重复执行，已建好的资源会跳过。
 
 ```bash
-pnpm db:migrate:remote
-pnpm deploy
+./scripts/first-deploy.sh
 ```
 
-5. 部署后拿到 `https://couple-quest.<你的子域>.workers.dev`，回来把
-   `wrangler.jsonc` 里的 `RP_ID` 改成该域名（不带 https://）、
-   `RP_ORIGIN` 改成完整 https URL，再 `pnpm deploy` 一次。
+想用自己的域名就带上（推荐，见下方警告）：
 
-> ⚠️ Passkey 永久绑定 RP_ID 域名。域名一旦定了就别改，改了两个人的
-> 面容登录都要重新绑定。想用自定义域名的话，第 5 步直接填自定义域名。
+```bash
+./scripts/first-deploy.sh quest.example.com
+```
+
+跑完会打印访问地址和**初始化口令**，拿口令去 `/setup` 建两个人的账号。
+
+> ⚠️ Passkey 永久绑定域名。用 workers.dev 之后再换成自己的域名，
+> 两个人的面容登录都要重新绑一次。介意就一开始直接用自己的域名。
+
+初始化口令（`BOOTSTRAP_SECRET`）的作用：`/setup` 要求填对它才能建账号，
+否则部署完到你本人打开之间，任何拿到网址的人都能先建号占领实例。
 
 ## 日常发版
 
