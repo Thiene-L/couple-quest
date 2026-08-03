@@ -164,6 +164,17 @@ export const challenges = sqliteTable(
   (t) => [index("challenges_expires_idx").on(t.expiresAt)],
 );
 
+// 邀请另一半注册用的一次性码。满两人后不再有效
+export const invites = sqliteTable("invites", {
+  code: text("code").primaryKey(),
+  createdBy: text("created_by")
+    .notNull()
+    .references(() => users.id),
+  createdAt: integer("created_at", { mode: "timestamp_ms" }).notNull(),
+  usedAt: integer("used_at", { mode: "timestamp_ms" }),
+  usedBy: text("used_by"),
+});
+
 // 登录失败计数，用于限流
 export const loginAttempts = sqliteTable("login_attempts", {
   key: text("key").primaryKey(), // 用户名或来源 IP

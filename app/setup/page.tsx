@@ -1,90 +1,68 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
-
-interface AccountForm {
-  username: string;
-  password: string;
-  displayName: string;
-}
-
-const EMPTY: AccountForm = { username: "", password: "", displayName: "" };
 
 const MIN_PASSWORD_LENGTH = 10;
+const MAX_DISPLAY_NAME_LENGTH = 20;
+const USERNAME_PATTERN = /^[A-Za-z0-9_-]{2,20}$/;
+
+const USERNAME_ERROR = "用户名只能用字母、数字、下划线或减号，2-20 位";
+const PASSWORD_ERROR = `密码至少要 ${MIN_PASSWORD_LENGTH} 位`;
 
 const inputCls =
   "w-full rounded-xl border border-border bg-background px-3 py-2.5 text-foreground outline-none focus:border-primary";
+const labelCls = "mb-1 block text-sm text-muted";
+const fieldErrorCls = "mt-1.5 text-xs text-accent";
 
-function AccountFields({
-  idPrefix,
-  value,
-  onChange,
-}: {
-  idPrefix: string;
-  value: AccountForm;
-  onChange: (next: AccountForm) => void;
-}) {
-  return (
-    <div className="space-y-3">
-      <div>
-        <label
-          htmlFor={`${idPrefix}-displayName`}
-          className="mb-1 block text-sm text-muted"
-        >
-          昵称
-        </label>
-        <input
-          id={`${idPrefix}-displayName`}
-          value={value.displayName}
-          onChange={(e) => onChange({ ...value, displayName: e.target.value })}
-          placeholder="怎么称呼"
-          className={inputCls}
-        />
-      </div>
-      <div>
-        <label
-          htmlFor={`${idPrefix}-username`}
-          className="mb-1 block text-sm text-muted"
-        >
-          用户名
-        </label>
-        <input
-          id={`${idPrefix}-username`}
-          value={value.username}
-          onChange={(e) => onChange({ ...value, username: e.target.value })}
-          autoComplete="off"
-          placeholder="登录用的用户名"
-          className={inputCls}
-        />
-      </div>
-      <div>
-        <label
-          htmlFor={`${idPrefix}-password`}
-          className="mb-1 block text-sm text-muted"
-        >
-          密码
-        </label>
-        <input
-          id={`${idPrefix}-password`}
-          type="password"
-          value={value.password}
-          onChange={(e) => onChange({ ...value, password: e.target.value })}
-          autoComplete="new-password"
-          placeholder={`至少 ${MIN_PASSWORD_LENGTH} 位`}
-          className={inputCls}
-        />
-      </div>
-    </div>
-  );
+interface FieldErrors {
+  bootstrapSecret?: string;
+  displayName?: string;
+  username?: string;
+  password?: string;
+}
+
+/** 昵称按字符数算，避免 emoji / 中文被 UTF-16 长度误判 */
+function charLength(value: string): number {
+  return Array.from(value).length;
+}
+
+function validate(values: {
+  bootstrapSecret: string;
+  displayName: string;
+  username: string;
+  password: string;
+}): FieldErrors {
+  const errors: FieldErrors = {};
+
+  if (!values.bootstrapSecret) {
+    errors.bootstrapSecret = "请先填写初始化口令";
+  }
+
+  const displayName = values.displayName.trim();
+  if (!displayName) {
+    errors.displayName = "昵称不能为空";
+  } else if (charLength(displayName) > MAX_DISPLAY_NAME_LENGTH) {
+    errors.displayName = `昵称最多 ${MAX_DISPLAY_NAME_LENGTH} 个字`;
+  }
+
+  if (!USERNAME_PATTERN.test(values.username.trim())) {
+    errors.username = USERNAME_ERROR;
+  }
+
+  if (values.password.length < MIN_PASSWORD_LENGTH) {
+    errors.password = PASSWORD_ERROR;
+  }
+
+  return errors;
 }
 
 export default function SetupPage() {
-  const router = useRouter();
   const [checking, setChecking] = useState(true);
   const [bootstrapSecret, setBootstrapSecret] = useState("");
-  const [me, setMe] = useState<AccountForm>({ ...EMPTY });
-  const [partner, setPartner] = useState<AccountForm>({ ...EMPTY });
+  const [displayName, setDisplayName] = useState("");
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+  const [fieldErrors, setFieldErrors] = useState<FieldErrors>({});
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState("");
 
@@ -93,10 +71,15 @@ export default function SetupPage() {
     (async () => {
       try {
         const res = await fetch("/api/auth/setup");
-        const data = (await res.json()) as { needsSetup?: boolean };
+        const data = (await res.json()) as {
+          needsSetup?: boolean;
+          isFull?: boolean;
+        };
         if (cancelled) return;
-        if (!data.needsSetup) {
-          router.replace("/login");
+        // 两个人都注册好了，或者第一个人已经注册过（第二个人得走邀请链接），
+        // 这页都不该再出现
+        if (data.isFull || !data.needsSetup) {
+          window.location.assign("/login");
           return;
         }
       } catch {
@@ -107,47 +90,35 @@ export default function SetupPage() {
     return () => {
       cancelled = true;
     };
-  }, [router]);
+  }, []);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     if (submitting) return;
     setError("");
 
-    if (!bootstrapSecret) {
-      setError("请先填写初始化口令");
-      return;
-    }
-
-    const pair = [me, partner];
-    for (const u of pair) {
-      if (!u.username.trim() || !u.displayName.trim()) {
-        setError("用户名和昵称都要填哦");
-        return;
-      }
-      if (u.password.length < MIN_PASSWORD_LENGTH) {
-        setError(`密码至少要 ${MIN_PASSWORD_LENGTH} 位`);
-        return;
-      }
-    }
-    if (me.username.trim() === partner.username.trim()) {
-      setError("两个人的用户名不能相同");
-      return;
-    }
+    const values = { bootstrapSecret, displayName, username, password };
+    const errors = validate(values);
+    setFieldErrors(errors);
+    if (Object.keys(errors).length > 0) return;
 
     setSubmitting(true);
     try {
       const res = await fetch("/api/auth/setup", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ bootstrapSecret, users: pair }),
+        body: JSON.stringify({
+          bootstrapSecret,
+          username: username.trim(),
+          password,
+          displayName: displayName.trim(),
+        }),
       });
       const data = (await res.json()) as { error?: string };
       if (!res.ok) {
         setError(data.error ?? "创建失败，再试一次");
         return;
       }
-      alert("TA 的账号也建好了，把用户名密码告诉 TA 吧！");
       // 登录后 cookie 变了，必须硬导航：客户端路由缓存里存的是未登录时
       // 预取到的「重定向回 /login」结果，router.replace 会命中它被弹回来
       window.location.assign("/tasks");
@@ -172,19 +143,18 @@ export default function SetupPage() {
         <div className="mb-6 text-center">
           <div className="text-5xl">💞</div>
           <h1 className="mt-3 text-2xl font-bold text-foreground">
-            创建你们两个人的账号
+            先创建你的账号
           </h1>
           <p className="mt-1 text-sm text-muted">
-            只需要设置这一次，两个账号一起建好
+            注册完会给你一个邀请链接，发给 TA 让 TA 自己注册，
+            <br className="hidden sm:block" />
+            密码只有 TA 自己知道
           </p>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="rounded-2xl border border-border bg-card p-4 shadow-sm">
-            <label
-              htmlFor="bootstrap-secret"
-              className="mb-1 block text-sm text-muted"
-            >
+            <label htmlFor="bootstrap-secret" className={labelCls}>
               初始化口令
             </label>
             <input
@@ -196,23 +166,70 @@ export default function SetupPage() {
               placeholder="初始化口令"
               className={inputCls}
             />
-            <p className="mt-1.5 text-xs text-muted">
-              部署时你设置的 BOOTSTRAP_SECRET
-            </p>
+            {fieldErrors.bootstrapSecret ? (
+              <p className={fieldErrorCls}>{fieldErrors.bootstrapSecret}</p>
+            ) : (
+              <p className="mt-1.5 text-xs text-muted">
+                部署时你设置的 BOOTSTRAP_SECRET
+              </p>
+            )}
           </div>
 
           <div className="rounded-2xl border border-border bg-card p-4 shadow-sm">
-            <h2 className="mb-3 font-semibold text-primary">我（本机使用）</h2>
-            <AccountFields idPrefix="me" value={me} onChange={setMe} />
-          </div>
-
-          <div className="rounded-2xl border border-border bg-card p-4 shadow-sm">
-            <h2 className="mb-3 font-semibold text-primary">TA（另一半）</h2>
-            <AccountFields
-              idPrefix="partner"
-              value={partner}
-              onChange={setPartner}
-            />
+            <h2 className="mb-3 font-semibold text-primary">你的账号</h2>
+            <div className="space-y-3">
+              <div>
+                <label htmlFor="displayName" className={labelCls}>
+                  昵称
+                </label>
+                <input
+                  id="displayName"
+                  value={displayName}
+                  onChange={(e) => setDisplayName(e.target.value)}
+                  placeholder="TA 怎么称呼你"
+                  className={inputCls}
+                />
+                {fieldErrors.displayName && (
+                  <p className={fieldErrorCls}>{fieldErrors.displayName}</p>
+                )}
+              </div>
+              <div>
+                <label htmlFor="username" className={labelCls}>
+                  用户名
+                </label>
+                <input
+                  id="username"
+                  value={username}
+                  onChange={(e) => setUsername(e.target.value)}
+                  autoComplete="username"
+                  maxLength={20}
+                  placeholder="登录用的用户名"
+                  className={inputCls}
+                />
+                {fieldErrors.username ? (
+                  <p className={fieldErrorCls}>{fieldErrors.username}</p>
+                ) : (
+                  <p className="mt-1.5 text-xs text-muted">{USERNAME_ERROR}</p>
+                )}
+              </div>
+              <div>
+                <label htmlFor="password" className={labelCls}>
+                  密码
+                </label>
+                <input
+                  id="password"
+                  type="password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  autoComplete="new-password"
+                  placeholder={`至少 ${MIN_PASSWORD_LENGTH} 位`}
+                  className={inputCls}
+                />
+                {fieldErrors.password && (
+                  <p className={fieldErrorCls}>{fieldErrors.password}</p>
+                )}
+              </div>
+            </div>
           </div>
 
           {error && <p className="text-center text-sm text-accent">{error}</p>}
@@ -222,9 +239,17 @@ export default function SetupPage() {
             disabled={submitting}
             className="w-full rounded-full bg-primary py-2.5 font-semibold text-white active:opacity-80 disabled:opacity-40"
           >
-            {submitting ? "创建中…" : "开启我们的任务之旅"}
+            {submitting ? "创建中…" : "创建我的账号"}
           </button>
         </form>
+
+        <div className="mt-6 rounded-2xl border border-border bg-primary-soft p-4 text-sm text-foreground">
+          <p className="font-semibold text-primary">接下来</p>
+          <p className="mt-1.5 text-muted">
+            创建成功后，在「我的」页面生成一条邀请链接发给 TA，
+            TA 打开链接自己设置用户名和密码，你们就绑定成一对啦 💌
+          </p>
+        </div>
       </div>
     </main>
   );

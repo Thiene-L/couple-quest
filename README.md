@@ -20,7 +20,9 @@ npm run db:migrate:local   # 建本地 D1 表（首次 & 每次 schema 变更后
 npm run dev                # http://localhost:3000
 ```
 
-首次打开会进入 /setup，一次性创建两个人的账号（本地初始化口令见 `.dev.vars`）。
+首次打开会进入 /setup（本地初始化口令见 `.dev.vars`）。注册是邀请制：
+第一个人凭初始化口令注册自己，然后在「我的」页生成邀请链接发给另一半，
+另一半打开链接自行注册、自设密码。两人满员后注册通道自动关闭。
 
 改了 `db/schema.ts` 后：`npm run db:generate && npm run db:migrate:local`。
 
@@ -52,8 +54,8 @@ npx wrangler login
 > ⚠️ Passkey 永久绑定域名。用 workers.dev 之后再换成自己的域名，
 > 两个人的面容登录都要重新绑一次。介意就一开始直接用自己的域名。
 
-初始化口令（`BOOTSTRAP_SECRET`）的作用：`/setup` 要求填对它才能建账号，
-否则部署完到你本人打开之间，任何拿到网址的人都能先建号占领实例。
+初始化口令（`BOOTSTRAP_SECRET`）只有第一个人注册时要填，否则部署完到你本人
+打开之间，任何拿到网址的人都能先建号占领实例。另一半走邀请链接，不需要它。
 
 ## 日常发版
 
