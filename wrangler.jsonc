@@ -4,6 +4,8 @@
   "main": ".open-next/worker.js",
   "compatibility_date": "2025-06-01",
   "compatibility_flags": ["nodejs_compat", "global_fetch_strictly_public"],
+  // 发布到 <name>.<你的子域>.workers.dev
+  "workers_dev": true,
   "assets": {
     "directory": ".open-next/assets",
     "binding": "ASSETS"
@@ -28,8 +30,8 @@
   "vars": {
     // Passkey 绑定的域名（rpID）。部署后改成真实域名，例如
     // couple-quest.<你的子域>.workers.dev；一旦有人注册了 Passkey 就别再改
-    "RP_ID": "localhost",
-    "RP_ORIGIN": "http://localhost:3000",
+    "RP_ID": "couple-quest.beanlou.workers.dev",
+    "RP_ORIGIN": "https://couple-quest.beanlou.workers.dev",
     "RP_NAME": "Couple Quest"
   }
   // SESSION_SECRET / BOOTSTRAP_SECRET 不放这里：
