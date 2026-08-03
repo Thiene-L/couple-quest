@@ -117,9 +117,21 @@ if [ -n "$CUSTOM_DOMAIN" ]; then
   say "使用自定义域名 $DOMAIN"
 else
   say "首次部署，拿 workers.dev 域名"
-  out=$($RUN deploy 2>&1)
-  printf '%s\n' "$out"
-  DOMAIN=$(printf '%s' "$out" | grep -oE 'https://[a-z0-9.-]+\.workers\.dev' | head -1 | sed 's|https://||')
+  # 边打印边留存：命令替换会在失败时把输出一起吞掉
+  log=$(mktemp)
+  if ! $RUN deploy 2>&1 | tee "$log"; then
+    if grep -q "workers.dev subdomain" "$log"; then
+      die "账号还没注册 workers.dev 子域名，发布不了。
+    去 $(grep -oE 'https://dash\.cloudflare\.com/[a-z0-9]+/workers/onboarding' "$log" | head -1)
+    取一个子域名（比如你的昵称），保存后重跑本脚本。
+    你的网址会是 couple-quest.<子域名>.workers.dev。
+
+    已经有自己的域名的话，也可以直接：./scripts/first-deploy.sh 你的域名"
+    fi
+    die "部署失败，见上面的错误。"
+  fi
+  DOMAIN=$(grep -oE 'https://[a-z0-9.-]+\.workers\.dev' "$log" | head -1 | sed 's|https://||')
+  rm -f "$log"
   [ -n "$DOMAIN" ] || die "没能从部署输出里识别出域名，手动把 RP_ID/RP_ORIGIN 填进 $CFG 后再跑 $RUN deploy"
 fi
 
