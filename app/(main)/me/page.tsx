@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import PasskeyEnrollButton from "@/components/PasskeyEnrollButton";
+import PushEnrollButton from "@/components/PushEnrollButton";
 
 interface MeData {
   partnerName: string;
@@ -212,6 +213,17 @@ export default function MePage() {
         <p className="mt-2 text-xs text-muted">
           已绑定 {data?.passkeyCount ?? 0} 台设备
         </p>
+      </div>
+
+      {/* 推送通知 */}
+      <div className="mt-6 rounded-2xl border border-border bg-card p-4 shadow-sm">
+        <p className="font-semibold text-foreground">消息通知</p>
+        <p className="mt-1 text-sm text-muted">
+          TA 给你派任务、完成打卡、兑换奖励时，手机会收到提醒。
+        </p>
+        <div className="mt-3">
+          <PushEnrollButton />
+        </div>
       </div>
 
       {/* 退出登录 */}

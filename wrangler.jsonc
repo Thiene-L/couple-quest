@@ -35,7 +35,10 @@
     // couple-quest.<你的子域>.workers.dev；一旦有人注册了 Passkey 就别再改
     "RP_ID": "lovesmia.com",
     "RP_ORIGIN": "https://lovesmia.com",
-    "RP_NAME": "Couple Quest"
+    "RP_NAME": "Couple Quest",
+    // Web Push 的 VAPID 公钥，本来就要发给浏览器，不是秘密。
+    // 私钥是 secret：wrangler secret put VAPID_PRIVATE_KEY
+    "VAPID_PUBLIC_KEY": "BKmlRjdp5n3ttS3pUe5fh0NAh8FQLaVNCNpIE9ds9uIJKCH-nlrstXzgZOrZTg5dtMrK4BZxNObik_m9SS-NLU4"
   }
   // SESSION_SECRET / BOOTSTRAP_SECRET 不放这里：
   //   本地开发写在 .dev.vars

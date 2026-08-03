@@ -8,6 +8,10 @@
 - Cloudflare Workers（经 [@opennextjs/cloudflare](https://opennext.js.org/cloudflare)）
 - D1 (SQLite) + Drizzle ORM / R2（打卡照片）
 - 登录：账号密码（PBKDF2）+ Passkey 面容/指纹登录（SimpleWebAuthn）
+- 通知：Web Push（VAPID），派任务 / 打卡 / 确认 / 兑换等事件推给对方
+
+> ⚠️ iOS 只有「添加到主屏幕」后的 PWA 能收推送，Safari 标签页里收不到。
+> 顺序是：加主屏 → 从主屏图标打开 →「我的」页开启通知。
 
 积分账本只增不改，余额由 `SUM(delta)` 求出；所有记分路径带幂等键并走条件写，
 双击、并发、重放都不会重复记分或透支。

@@ -1,6 +1,8 @@
+import { getCloudflareContext } from "@opennextjs/cloudflare";
 import { and, eq } from "drizzle-orm";
 import { redemptions, rewards } from "@/db/schema";
 import { getDb } from "@/lib/db";
+import { notifyInBackground } from "@/lib/push";
 import { getSession, unauthorizedResponse } from "@/lib/session";
 
 // POST /api/redemptions/[id]/fulfill：奖励提供者兑现一笔 pending 兑换
@@ -17,7 +19,9 @@ export async function POST(
     .select({
       id: redemptions.id,
       status: redemptions.status,
+      redeemedBy: redemptions.redeemedBy,
       ownerId: rewards.ownerId,
+      rewardTitle: rewards.title,
     })
     .from(redemptions)
     .innerJoin(rewards, eq(redemptions.rewardId, rewards.id))
@@ -53,6 +57,15 @@ export async function POST(
       { status: 400 },
     );
   }
+
+  // 只有真正把这行改成 fulfilled 的那次请求走到这里，被并发挤掉的上面已返回。
+  // 通知对象是兑换人，兑现人是奖励提供者本人，两者必然不同
+  const { ctx: cfCtx } = await getCloudflareContext({ async: true });
+  await notifyInBackground(cfCtx, record.redeemedBy, {
+    title: `${session.displayName} 兑现啦`,
+    body: `${record.rewardTitle} · 说到做到 💕`,
+    url: "/store",
+  });
 
   return Response.json({ ok: true });
 }

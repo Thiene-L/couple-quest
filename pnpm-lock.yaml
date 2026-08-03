@@ -32,6 +32,9 @@ importers:
       react-dom:
         specifier: 19.2.4
         version: 19.2.4(react@19.2.4)
+      web-push-browser:
+        specifier: ^1.4.2
+        version: 1.4.2
     devDependencies:
       '@cloudflare/workers-types':
         specifier: ^5.20260731.1
@@ -4159,6 +4162,9 @@ packages:
   vary@1.1.2:
     resolution: {integrity: sha512-BNGbWLfd0eUPabhkXUVm0j8uuvREyTh5ovRa/dyow/BqAbZJyC+5fU+IzQOzmAKzYqYRAISoRhdQr3eIZ/PXqg==}
     engines: {node: '>= 0.8'}
+
+  web-push-browser@1.4.2:
+    resolution: {integrity: sha512-U4gs2JdGtjJ9QAezpLLbqTBfjXWttoy0N0c+RU8wCadG074/C7TVocX92B3aYfhda1ZJzU36UOMZZIkJsuBOQg==}
 
   web-streams-polyfill@4.0.0-beta.3:
     resolution: {integrity: sha512-QW95TCTaHmsYfHDybGMwO5IJIM93I/6vTRk+daHTWFPhwh+C8Cg7j7XyKrwrj8Ib6vYXe0ocYNrmzY4xAAN6ug==}
@@ -8745,6 +8751,8 @@ snapshots:
   urlpattern-polyfill@10.1.0: {}
 
   vary@1.1.2: {}
+
+  web-push-browser@1.4.2: {}
 
   web-streams-polyfill@4.0.0-beta.3: {}
 

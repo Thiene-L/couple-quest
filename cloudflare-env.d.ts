@@ -12,4 +12,7 @@ interface CloudflareEnv {
   RP_ID: string;
   RP_ORIGIN: string;
   RP_NAME: string;
+  // Web Push（VAPID）。公钥是 var，私钥是 secret
+  VAPID_PUBLIC_KEY: string;
+  VAPID_PRIVATE_KEY: string;
 }

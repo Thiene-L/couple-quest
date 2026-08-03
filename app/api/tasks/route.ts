@@ -1,8 +1,10 @@
+import { getCloudflareContext } from "@opennextjs/cloudflare";
 import { and, desc, eq, inArray, ne, or } from "drizzle-orm";
 import { alias } from "drizzle-orm/sqlite-core";
 import { nanoid } from "nanoid";
 import { taskCompletions, tasks, users } from "@/db/schema";
 import { getDb, todayKey } from "@/lib/db";
+import { notifyInBackground } from "@/lib/push";
 import { getSession, unauthorizedResponse } from "@/lib/session";
 import { getPartner } from "@/lib/users";
 
@@ -181,6 +183,16 @@ export async function POST(req: Request) {
     createdAt: new Date(),
   };
   await db.insert(tasks).values(task);
+
+  // 只有派给对方的任务才推通知，派给自己的不用打扰
+  if (assigneeId !== session.userId) {
+    const { ctx } = await getCloudflareContext({ async: true });
+    await notifyInBackground(ctx, assigneeId, {
+      title: `${session.displayName} 给你派了个任务`,
+      body: `${title} · ${points} 分`,
+      url: "/tasks",
+    });
+  }
 
   return Response.json({ task }, { status: 201 });
 }

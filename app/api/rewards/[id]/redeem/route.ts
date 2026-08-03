@@ -1,7 +1,9 @@
+import { getCloudflareContext } from "@opennextjs/cloudflare";
 import { eq, sql } from "drizzle-orm";
 import { nanoid } from "nanoid";
 import { pointLedger, redemptions, rewards } from "@/db/schema";
 import { getDb } from "@/lib/db";
+import { notifyInBackground } from "@/lib/push";
 import { getSession, unauthorizedResponse } from "@/lib/session";
 
 // POST /api/rewards/[id]/redeem：兑换对方提供的奖励，下单即扣分
@@ -71,6 +73,15 @@ export async function POST(
     }
     return Response.json({ error: "兑换失败，请重试" }, { status: 500 });
   }
+
+  // 扣分和兑换单都落库之后才通知奖励提供者；上面补偿回滚的分支已经提前返回。
+  // 兑换人不可能是提供者本人（上面 400 拦掉了），不会给自己发
+  const { ctx: cfCtx } = await getCloudflareContext({ async: true });
+  await notifyInBackground(cfCtx, reward.ownerId, {
+    title: `${session.displayName} 兑换了奖励`,
+    body: `${reward.title} · 花了 ${reward.cost} 分，等你兑现`,
+    url: "/store",
+  });
 
   return Response.json({ ok: true, redemptionId });
 }

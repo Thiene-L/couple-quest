@@ -1,7 +1,9 @@
+import { getCloudflareContext } from "@opennextjs/cloudflare";
 import { and, eq } from "drizzle-orm";
 import { pointLedger, redemptions, rewards } from "@/db/schema";
 import { getDb } from "@/lib/db";
 import { ledgerRow } from "@/lib/points";
+import { notifyInBackground } from "@/lib/push";
 import { getSession, unauthorizedResponse } from "@/lib/session";
 
 // POST /api/redemptions/[id]/cancel：兑换人本人取消 pending 兑换并退回积分
@@ -20,6 +22,7 @@ export async function POST(
       redeemedBy: redemptions.redeemedBy,
       cost: redemptions.cost,
       status: redemptions.status,
+      ownerId: rewards.ownerId,
       rewardTitle: rewards.title,
     })
     .from(redemptions)
@@ -71,6 +74,15 @@ export async function POST(
       }),
     )
     .onConflictDoNothing();
+
+  // 状态改成 cancelled、分也退回之后才通知奖励提供者；被并发挤掉的请求上面已返回。
+  // 取消的是兑换人本人，和提供者必然不是同一个人
+  const { ctx: cfCtx } = await getCloudflareContext({ async: true });
+  await notifyInBackground(cfCtx, record.ownerId, {
+    title: `${session.displayName} 取消了兑换`,
+    body: `${record.rewardTitle} · ${record.cost} 分已退回`,
+    url: "/store",
+  });
 
   return Response.json({ ok: true });
 }

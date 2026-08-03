@@ -164,6 +164,22 @@ export const challenges = sqliteTable(
   (t) => [index("challenges_expires_idx").on(t.expiresAt)],
 );
 
+// Web Push 订阅。一人可有多台设备，退订或推送失效时删行
+export const pushSubscriptions = sqliteTable(
+  "push_subscriptions",
+  {
+    endpoint: text("endpoint").primaryKey(),
+    userId: text("user_id")
+      .notNull()
+      .references(() => users.id),
+    p256dh: text("p256dh").notNull(),
+    auth: text("auth").notNull(),
+    deviceName: text("device_name"),
+    createdAt: integer("created_at", { mode: "timestamp_ms" }).notNull(),
+  },
+  (t) => [index("push_user_idx").on(t.userId)],
+);
+
 // 邀请另一半注册用的一次性码。满两人后不再有效
 export const invites = sqliteTable("invites", {
   code: text("code").primaryKey(),

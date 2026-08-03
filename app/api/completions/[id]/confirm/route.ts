@@ -1,7 +1,9 @@
+import { getCloudflareContext } from "@opennextjs/cloudflare";
 import { and, eq } from "drizzle-orm";
 import { pointLedger, taskCompletions, tasks } from "@/db/schema";
 import { getDb } from "@/lib/db";
 import { ledgerRow } from "@/lib/points";
+import { notifyInBackground } from "@/lib/push";
 import { getSession, unauthorizedResponse } from "@/lib/session";
 
 // POST /api/completions/[id]/confirm：确认对方的完成记录，记分；once 任务同时关闭
@@ -85,6 +87,15 @@ export async function POST(
   } else {
     await db.batch([addPoints]);
   }
+
+  // 记分之后再通知完成者；抢输的那次请求在上面的条件更新处已经出局
+  // 路由第二个参数已经叫 ctx，这里把 Cloudflare 的 ctx 换个名字
+  const { ctx: cfCtx } = await getCloudflareContext({ async: true });
+  await notifyInBackground(cfCtx, completion.completedBy, {
+    title: `${session.displayName} 确认了你的打卡`,
+    body: `${task.title} · +${task.points} 分到手 🎉`,
+    url: "/ledger",
+  });
 
   return Response.json({ ok: true });
 }

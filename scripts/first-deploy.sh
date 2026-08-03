@@ -104,6 +104,19 @@ else
   echo "BOOTSTRAP_SECRET 已生成，稍后在 /setup 页面填它。"
 fi
 
+# 推送用的 VAPID 密钥对：公钥进 wrangler.jsonc（本来就要发给浏览器），
+# 私钥进 secret。两者必须配对，缺一方就整对重新生成
+if printf '%s' "$existing" | grep -q VAPID_PRIVATE_KEY; then
+  echo "VAPID_PRIVATE_KEY 已存在，跳过。"
+else
+  vapid=$(node -e "import('web-push-browser').then(async m=>{const k=await m.serializeVapidKeys(await m.generateVapidKeys());console.log(k.publicKey+' '+k.privateKey)})")
+  pub=${vapid%% *}
+  prv=${vapid##* }
+  printf '%s' "$prv" | $WRANGLER secret put VAPID_PRIVATE_KEY
+  sed -i '' "s|\"VAPID_PUBLIC_KEY\": \".*\"|\"VAPID_PUBLIC_KEY\": \"$pub\"|" $CFG
+  echo "VAPID 密钥对已生成：公钥写入 $CFG，私钥存为 secret。"
+fi
+
 # ---------------------------------------------------------------- 4. 建表
 say "在线上数据库建表"
 $WRANGLER d1 migrations apply $DB_NAME --remote || \

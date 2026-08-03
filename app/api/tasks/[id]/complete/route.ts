@@ -1,7 +1,9 @@
+import { getCloudflareContext } from "@opennextjs/cloudflare";
 import { and, eq, inArray } from "drizzle-orm";
 import { nanoid } from "nanoid";
 import { taskCompletions, tasks } from "@/db/schema";
 import { getDb, getEnv, todayKey } from "@/lib/db";
+import { notifyInBackground } from "@/lib/push";
 import { getSession, unauthorizedResponse } from "@/lib/session";
 
 // 允许上传的图片类型白名单：MIME -> R2 key 扩展名。
@@ -142,6 +144,18 @@ export async function POST(
       { error: "已经提交过啦，等 TA 确认吧" },
       { status: 400 },
     );
+  }
+
+  // 通知任务的另一方来确认；自己给自己派的任务没有另一方，不推
+  // 路由第二个参数已经叫 ctx，这里把 Cloudflare 的 ctx 换个名字
+  if (task.creatorId !== session.userId) {
+    const { ctx: cfCtx } = await getCloudflareContext({ async: true });
+    await notifyInBackground(cfCtx, task.creatorId, {
+      title: `${session.displayName} 完成了打卡`,
+      body: `${task.title} · 等你确认`,
+      url: "/tasks",
+      tag: "completion",
+    });
   }
 
   return Response.json({ completion }, { status: 201 });

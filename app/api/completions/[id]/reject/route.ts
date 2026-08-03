@@ -1,6 +1,8 @@
+import { getCloudflareContext } from "@opennextjs/cloudflare";
 import { and, eq } from "drizzle-orm";
 import { taskCompletions, tasks } from "@/db/schema";
 import { getDb } from "@/lib/db";
+import { notifyInBackground } from "@/lib/push";
 import { getSession, unauthorizedResponse } from "@/lib/session";
 
 // POST /api/completions/[id]/reject：打回对方的完成记录，不记分；daily 当天可重新提交
@@ -59,6 +61,15 @@ export async function POST(
   if (rejected.length === 0) {
     return Response.json({ error: "这条打卡已经处理过了" }, { status: 400 });
   }
+
+  // 打回真正生效后再通知完成者；抢输的那次请求在上面的条件更新处已经出局
+  // 路由第二个参数已经叫 ctx，这里把 Cloudflare 的 ctx 换个名字
+  const { ctx: cfCtx } = await getCloudflareContext({ async: true });
+  await notifyInBackground(cfCtx, completion.completedBy, {
+    title: `${session.displayName} 把打卡打回了`,
+    body: `${task.title} · 再补个证据吧`,
+    url: "/tasks",
+  });
 
   return Response.json({ ok: true });
 }
