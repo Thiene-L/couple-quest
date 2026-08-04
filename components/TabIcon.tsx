@@ -4,20 +4,22 @@
 
 type Name = "tasks" | "chat" | "daily" | "store" | "me" | "moments" | "trophy";
 
-// 蝴蝶结：五个图标共用的记号。cx/cy 是结扣中心，s 是缩放
+// 蝴蝶结：所有图标共用的记号。cx/cy 是结扣中心，s 是缩放。
+// 填充走 --bow-fill：未选中时给成和其它部位一样的底色（结变成描边），
+// 选中时才填满彩色。否则五个标签都顶着满饱和的结，看不出谁被选中
 function Bow({ cx, cy, s = 1 }: { cx: number; cy: number; s?: number }) {
   return (
     <g transform={`translate(${cx} ${cy}) scale(${s})`}>
       <path
         d="M-2.6 0.5C-4-5.5-8.5-8-11-6.2c-2.6 1.9-2.2 6.4.6 7.9 2.2 1.2 5.4.6 7.8-1.6Z"
-        fill="var(--kitty-bow)"
+        fill="var(--bow-fill)"
         stroke="currentColor"
         strokeWidth="1.7"
         strokeLinejoin="round"
       />
       <path
         d="M2.6 0.5C4-5.5 8.5-8 11-6.2c2.6 1.9 2.2 6.4-.6 7.9-2.2 1.2-5.4.6-7.8-1.6Z"
-        fill="var(--kitty-bow)"
+        fill="var(--bow-fill)"
         stroke="currentColor"
         strokeWidth="1.7"
         strokeLinejoin="round"
@@ -27,7 +29,7 @@ function Bow({ cx, cy, s = 1 }: { cx: number; cy: number; s?: number }) {
         cy="0"
         rx="2.9"
         ry="3.1"
-        fill="var(--kitty-bow)"
+        fill="var(--bow-fill)"
         stroke="currentColor"
         strokeWidth="1.7"
       />
@@ -187,10 +189,14 @@ const SHAPES: Record<Name, React.ReactNode> = {
 export default function TabIcon({
   name,
   size = 24,
+  active = true,
   className = "",
 }: {
   name: Name;
   size?: number;
+  // 导航里传 false 表示未选中，蝴蝶结退成描边；
+  // 页面内当装饰用时默认 true，正常上色
+  active?: boolean;
   className?: string;
 }) {
   return (
@@ -199,6 +205,11 @@ export default function TabIcon({
       width={size}
       height={size}
       className={className}
+      style={
+        {
+          "--bow-fill": active ? "var(--kitty-bow)" : "var(--kitty-fill)",
+        } as React.CSSProperties
+      }
       aria-hidden
       focusable="false"
     >

@@ -48,7 +48,7 @@ export default function BottomNav() {
                     : "text-muted hover:bg-primary-soft/50 hover:text-foreground"
                 }`}
               >
-                <TabIcon name={tab.icon} size={22} />
+                <TabIcon name={tab.icon} size={22} active={active} />
                 {tab.label}
               </Link>
             );
@@ -73,7 +73,7 @@ export default function BottomNav() {
                   active ? "font-semibold text-primary" : "text-muted"
                 }`}
               >
-                <TabIcon name={tab.icon} size={22} />
+                <TabIcon name={tab.icon} size={22} active={active} />
                 <span className="truncate">{tab.label}</span>
               </Link>
             );
