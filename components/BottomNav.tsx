@@ -6,6 +6,7 @@ import { usePathname } from "next/navigation";
 // 账本不在主导航里：从商店的余额卡片和「我的」页进入
 const TABS = [
   { href: "/tasks", label: "任务", icon: "📋" },
+  { href: "/chat", label: "聊天", icon: "💬" },
   { href: "/daily", label: "每日", icon: "💭" },
   { href: "/moments", label: "时光", icon: "📸" },
   { href: "/store", label: "商店", icon: "🎁" },
@@ -66,11 +67,11 @@ export default function BottomNav() {
                 key={tab.href}
                 href={tab.href}
                 aria-current={active ? "page" : undefined}
-                className={`flex min-w-0 flex-1 flex-col items-center gap-0.5 px-1 py-2 text-[11px] leading-none ${
+                className={`flex min-w-0 flex-1 flex-col items-center gap-0.5 px-0.5 py-2 text-[10px] leading-none ${
                   active ? "font-semibold text-primary" : "text-muted"
                 }`}
               >
-                <span className="text-lg leading-none">{tab.icon}</span>
+                <span className="text-[17px] leading-none">{tab.icon}</span>
                 <span className="truncate">{tab.label}</span>
               </Link>
             );

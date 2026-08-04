@@ -43,6 +43,13 @@
       "when": 1785863381520,
       "tag": "0005_nostalgic_edwin_jarvis",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "6",
+      "when": 1785867094490,
+      "tag": "0006_illegal_diamondback",
+      "breakpoints": true
     }
   ]
 }

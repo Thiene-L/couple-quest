@@ -314,6 +314,27 @@ export const duels = sqliteTable(
   (t) => [index("duels_status_idx").on(t.status, t.createdAt)],
 );
 
+// 聊天中转站。服务器只是管道：收件方拉走并回执后立即删除，
+// 完整聊天记录只存在两个人各自设备的 IndexedDB 里。
+// 未被回执的消息保留 RELAY_TTL_DAYS 天兜底（防一方长期不上线）
+export const chatRelay = sqliteTable(
+  "chat_relay",
+  {
+    id: text("id").primaryKey(),
+    fromUserId: text("from_user_id")
+      .notNull()
+      .references(() => users.id),
+    toUserId: text("to_user_id")
+      .notNull()
+      .references(() => users.id),
+    body: text("body").notNull(),
+    createdAt: integer("created_at", { mode: "timestamp_ms" }).notNull(),
+    // 收件方拉到过就打时间戳；回执后整行删除
+    deliveredAt: integer("delivered_at", { mode: "timestamp_ms" }),
+  },
+  (t) => [index("chat_relay_to_idx").on(t.toUserId, t.createdAt)],
+);
+
 export const reminderLog = sqliteTable("reminder_log", {
   key: text("key").primaryKey(), // 形如 daily-task:{userId}:{dayKey}
   sentAt: integer("sent_at", { mode: "timestamp_ms" }).notNull(),
