@@ -5,6 +5,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import MilestoneBanner from "@/components/MilestoneBanner";
 import PokeButton from "@/components/PokeButton";
 import BrandMark from "@/components/BrandMark";
+import TabIcon from "@/components/TabIcon";
 
 interface Me {
   id: string;
@@ -339,13 +340,13 @@ export default function TasksPage() {
           href="/moments"
           className="flex items-center justify-center gap-1.5 rounded-xl border border-border bg-card px-3 py-2 text-sm text-foreground shadow-sm active:opacity-80"
         >
-          <span>📸</span> 时光
+          <TabIcon name="moments" size={18} /> 时光
         </Link>
         <Link
           href="/achievements"
           className="flex items-center justify-center gap-1.5 rounded-xl border border-border bg-card px-3 py-2 text-sm text-foreground shadow-sm active:opacity-80"
         >
-          <span>🏆</span> 成就
+          <TabIcon name="trophy" size={18} /> 成就
         </Link>
       </div>
 

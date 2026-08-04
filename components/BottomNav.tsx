@@ -3,15 +3,16 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import BrandMark from "@/components/BrandMark";
+import TabIcon from "@/components/TabIcon";
 
 // 只留五个高频入口。下面这些从别处进：
 //   时光/纪念日/成就 → 任务页顶部    账本/猜拳 → 商店页
 const TABS = [
-  { href: "/tasks", label: "任务", icon: "📋" },
-  { href: "/chat", label: "聊天", icon: "💬" },
-  { href: "/daily", label: "每日", icon: "💭" },
-  { href: "/store", label: "商店", icon: "🎁" },
-  { href: "/me", label: "我的", icon: "🐻" },
+  { href: "/tasks", label: "任务", icon: "tasks" },
+  { href: "/chat", label: "聊天", icon: "chat" },
+  { href: "/daily", label: "每日", icon: "daily" },
+  { href: "/store", label: "商店", icon: "store" },
+  { href: "/me", label: "我的", icon: "me" },
 ] as const;
 
 function isActive(pathname: string, href: string): boolean {
@@ -47,7 +48,7 @@ export default function BottomNav() {
                     : "text-muted hover:bg-primary-soft/50 hover:text-foreground"
                 }`}
               >
-                <span className="text-xl leading-none">{tab.icon}</span>
+                <TabIcon name={tab.icon} size={22} />
                 {tab.label}
               </Link>
             );
@@ -72,7 +73,7 @@ export default function BottomNav() {
                   active ? "font-semibold text-primary" : "text-muted"
                 }`}
               >
-                <span className="text-lg leading-none">{tab.icon}</span>
+                <TabIcon name={tab.icon} size={22} />
                 <span className="truncate">{tab.label}</span>
               </Link>
             );

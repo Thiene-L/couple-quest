@@ -28,6 +28,11 @@
   --accent-border: rgba(255, 200, 0, 0.5);
   --accent-soft: #fffaeb;
 
+  /* 导航图标：蝴蝶结永远是红的（是这套形象的记号，不跟随选中态），
+     内部填充用卡片色，浅色下是白脸的感觉 */
+  --kitty-bow: #e4002b;
+  --kitty-fill: #ffffff;
+
   /* 底纹：小蝴蝶结 + 圆点交错平铺，密度低到不抢内容 */
   --pattern-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='96' height='96' viewBox='0 0 96 96'%3E%3Cg fill='%23000'%3E%3Cpath d='M22 27c0-6-7-9-11-4-3 5 1 10 6 8l5-4zm4 0c0-6 7-9 11-4 3 5-1 10-6 8l-5-4z'/%3E%3Cellipse cx='24' cy='27' rx='3.2' ry='3.6'/%3E%3Cpath d='M70 75c0-6-7-9-11-4-3 5 1 10 6 8l5-4zm4 0c0-6 7-9 11-4 3 5-1 10-6 8l-5-4z'/%3E%3Cellipse cx='72' cy='75' rx='3.2' ry='3.6'/%3E%3Ccircle cx='72' cy='25' r='2.6'/%3E%3Ccircle cx='24' cy='73' r='2.6'/%3E%3C/g%3E%3C/svg%3E");
   --pattern-opacity: 0.06;
@@ -56,6 +61,10 @@
     --danger-soft: rgba(255, 122, 148, 0.12);
     --accent-border: rgba(255, 210, 77, 0.4);
     --accent-soft: rgba(255, 210, 77, 0.1);
+
+    /* 深色下红色发闷，用提亮的粉红；填充跟着卡片色走 */
+    --kitty-bow: #ff6b8a;
+    --kitty-fill: #292023;
 
     --pattern-opacity: 0.09;
   }
