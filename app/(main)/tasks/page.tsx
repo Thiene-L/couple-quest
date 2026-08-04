@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useCallback, useEffect, useRef, useState } from "react";
 import MilestoneBanner from "@/components/MilestoneBanner";
 import PokeButton from "@/components/PokeButton";
+import BrandMark from "@/components/BrandMark";
 
 interface Me {
   id: string;
@@ -211,7 +212,8 @@ export default function TasksPage() {
           partner?: Partial<Me> | null;
         } & Partial<Me>;
         const u = j.user ?? j;
-        if (u?.displayName) setMe({ id: u.id ?? "", displayName: u.displayName });
+        if (u?.displayName)
+          setMe({ id: u.id ?? "", displayName: u.displayName });
       }
       if (tasksRes.ok) {
         const j = (await tasksRes.json()) as {
@@ -311,7 +313,8 @@ export default function TasksPage() {
   return (
     <div className="mx-auto w-full max-w-md md:max-w-2xl px-4 md:px-6 pt-6">
       <h1 className="text-2xl font-bold text-foreground">
-        Hi，{me?.displayName ?? ""} 💕
+        Hi，{me?.displayName ?? ""}
+        <BrandMark size={30} className="ml-1 inline-block align-[-6px]" />
       </h1>
       <p className="mt-1 text-sm text-muted">{todayStr}</p>
 

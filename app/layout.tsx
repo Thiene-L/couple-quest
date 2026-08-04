@@ -32,7 +32,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="zh-CN" className="h-full antialiased">
-      <body className="min-h-full flex flex-col bg-[var(--background)] text-[var(--foreground)]">
+      {/* body 不设背景：底色由 html 提供并传播到画布，
+          body 保持透明才不会盖住 body::before 那层蝴蝶结底纹 */}
+      <body className="min-h-full flex flex-col text-[var(--foreground)]">
         {children}
       </body>
     </html>

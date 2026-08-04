@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import ReactionBar from "@/components/ReactionBar";
 import BackLink from "@/components/BackLink";
+import BrandMark from "@/components/BrandMark";
 
 interface MomentItem {
   id: string;
@@ -222,7 +223,7 @@ export default function MomentsPage() {
 
       {groups.length === 0 && !error && (
         <div className="mt-6 rounded-2xl border border-border bg-card p-8 text-center shadow-sm">
-          <p className="text-4xl">📸</p>
+          <BrandMark size={92} variant="full" className="mx-auto opacity-80" />
           <p className="mt-3 text-sm text-muted">
             还没有瞬间，去完成第一个任务吧～
           </p>

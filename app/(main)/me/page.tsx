@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import PasskeyEnrollButton from "@/components/PasskeyEnrollButton";
 import PushEnrollButton from "@/components/PushEnrollButton";
+import BrandMark from "@/components/BrandMark";
 
 interface MeData {
   partnerName: string;
@@ -141,8 +142,8 @@ export default function MePage() {
 
       {/* 个人信息 */}
       <div className="mt-6 flex flex-col items-center">
-        <div className="flex h-20 w-20 items-center justify-center rounded-full bg-primary-soft text-3xl font-bold text-primary">
-          {displayName.slice(0, 1) || "?"}
+        <div className="flex h-20 w-20 items-center justify-center rounded-full bg-primary-soft">
+          <BrandMark size={52} />
         </div>
         <p className="mt-3 text-lg font-bold text-foreground">{displayName}</p>
         <p className="text-sm text-muted">@{data?.me.username ?? ""}</p>

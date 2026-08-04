@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import BrandMark from "@/components/BrandMark";
 
 const MIN_PASSWORD_LENGTH = 10;
 const MAX_DISPLAY_NAME_LENGTH = 20;
@@ -141,7 +142,7 @@ export default function SetupPage() {
     <main className="min-h-dvh bg-background">
       <div className="mx-auto max-w-md px-4 pb-[calc(2.5rem+env(safe-area-inset-bottom))] pt-12">
         <div className="mb-6 text-center">
-          <div className="text-5xl">💞</div>
+          <BrandMark size={104} variant="full" className="mx-auto" />
           <h1 className="mt-3 text-2xl font-bold text-foreground">
             先创建你的账号
           </h1>
@@ -246,8 +247,8 @@ export default function SetupPage() {
         <div className="mt-6 rounded-2xl border border-border bg-primary-soft p-4 text-sm text-foreground">
           <p className="font-semibold text-primary">接下来</p>
           <p className="mt-1.5 text-muted">
-            创建成功后，在「我的」页面生成一条邀请链接发给 TA，
-            TA 打开链接自己设置用户名和密码，你们就绑定成一对啦 💌
+            创建成功后，在「我的」页面生成一条邀请链接发给 TA， TA
+            打开链接自己设置用户名和密码，你们就绑定成一对啦 💌
           </p>
         </div>
       </div>

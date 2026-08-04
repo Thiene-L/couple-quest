@@ -17,6 +17,7 @@ import {
   supportsLocalChat,
   type ChatMessage,
 } from "@/lib/chatdb";
+import BrandMark from "@/components/BrandMark";
 
 const POLL_MS = 4000;
 
@@ -49,7 +50,10 @@ function dayLabel(iso: string): string {
 }
 
 // 相邻消息跨天时插一条日期分隔
-function needsDivider(prev: ChatMessage | undefined, cur: ChatMessage): boolean {
+function needsDivider(
+  prev: ChatMessage | undefined,
+  cur: ChatMessage,
+): boolean {
   if (!prev) return true;
   return dayLabel(prev.createdAt) !== dayLabel(cur.createdAt);
 }
@@ -231,7 +235,8 @@ export default function ChatPage() {
         <h1 className="text-2xl font-bold text-foreground">聊天</h1>
         <div className="mt-4 rounded-2xl border border-border bg-card p-4 shadow-sm">
           <p className="text-sm text-muted">
-            这个浏览器不支持本地存储，聊天记录没地方放。换 Safari 或 Chrome 试试。
+            这个浏览器不支持本地存储，聊天记录没地方放。换 Safari 或 Chrome
+            试试。
           </p>
         </div>
       </div>
@@ -261,10 +266,7 @@ export default function ChatPage() {
         </div>
       )}
 
-      <div
-        ref={listRef}
-        className="mt-3 flex-1 space-y-2 overflow-y-auto pb-2"
-      >
+      <div ref={listRef} className="mt-3 flex-1 space-y-2 overflow-y-auto pb-2">
         {loading ? (
           <div className="space-y-3">
             <div className="h-10 w-40 animate-pulse rounded-2xl bg-card" />
@@ -273,7 +275,7 @@ export default function ChatPage() {
           </div>
         ) : messages.length === 0 ? (
           <div className="rounded-2xl border border-border bg-card p-6 text-center shadow-sm">
-            <div className="text-4xl">💬</div>
+            <BrandMark size={92} variant="full" className="mx-auto opacity-80" />
             <p className="mt-2 text-sm text-muted">
               还没有聊天记录，说句话开始吧
             </p>
@@ -318,7 +320,11 @@ export default function ChatPage() {
           onChange={(e) => setDraft(e.target.value)}
           onKeyDown={(e) => {
             // 电脑上回车直接发，手机上回车还是换行
-            if (e.key === "Enter" && !e.shiftKey && !("ontouchstart" in window)) {
+            if (
+              e.key === "Enter" &&
+              !e.shiftKey &&
+              !("ontouchstart" in window)
+            ) {
               e.preventDefault();
               void send();
             }

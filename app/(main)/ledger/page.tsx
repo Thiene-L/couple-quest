@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import BackLink from "@/components/BackLink";
+import BrandMark from "@/components/BrandMark";
 
 interface LedgerEntry {
   id: string;

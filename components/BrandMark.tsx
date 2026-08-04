@@ -2,13 +2,22 @@
 
 import { useState } from "react";
 
-// 品牌图标。public/logo.svg 由使用者自备（已在 .gitignore 里，
-// 不进仓库），文件不存在时回落到蝴蝶结 emoji，不会留个破图
+// 品牌图标。素材由使用者自备（在 .gitignore 里，不进仓库），
+// 文件不存在时回落到蝴蝶结 emoji，不会留个破图。
+//   head — 头像版，适合小尺寸：页头、导航、头像圈
+//   full — 全身版，适合大留白处：空态、登录页
+const SRC = {
+  head: "/logo.svg",
+  full: "/logo-full.svg",
+} as const;
+
 export default function BrandMark({
   size = 48,
+  variant = "head",
   className = "",
 }: {
   size?: number;
+  variant?: keyof typeof SRC;
   className?: string;
 }) {
   const [failed, setFailed] = useState(false);
@@ -28,10 +37,8 @@ export default function BrandMark({
   return (
     // eslint-disable-next-line @next/next/no-img-element
     <img
-      src="/logo.svg"
+      src={SRC[variant]}
       alt=""
-      width={size}
-      height={size}
       onError={() => setFailed(true)}
       className={`object-contain ${className}`}
       style={{ width: size, height: size }}

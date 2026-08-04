@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useCallback, useEffect, useState } from "react";
+import BrandMark from "@/components/BrandMark";
 
 interface RewardItem {
   id: string;
@@ -104,9 +105,7 @@ export default function StorePage() {
   }
 
   const awaitingMe = redemptions.filter((r) => r.awaitingMe);
-  const myPending = redemptions.filter(
-    (r) => r.mine && r.status === "pending",
-  );
+  const myPending = redemptions.filter((r) => r.mine && r.status === "pending");
   const partnerRewards = rewards.filter((r) => !r.mine);
   const myRewards = rewards.filter((r) => r.mine);
 
@@ -135,7 +134,9 @@ export default function StorePage() {
         </span>
         <p className="text-sm opacity-90">我的积分</p>
         <p className="mt-1 text-4xl font-bold">{balance}</p>
-        <p className="mt-1 text-xs opacity-80">完成任务赚积分，兑换 TA 的宠爱</p>
+        <p className="mt-1 text-xs opacity-80">
+          完成任务赚积分，兑换 TA 的宠爱
+        </p>
       </Link>
 
       {error && (
@@ -159,7 +160,11 @@ export default function StorePage() {
                   兑换了「{r.rewardTitle}」
                 </p>
                 <button
-                  onClick={() => act(r.id, `/api/redemptions/${r.id}/fulfill`, { method: "POST" })}
+                  onClick={() =>
+                    act(r.id, `/api/redemptions/${r.id}/fulfill`, {
+                      method: "POST",
+                    })
+                  }
                   disabled={busyId !== ""}
                   className="shrink-0 rounded-full bg-primary px-4 py-1.5 text-sm font-semibold text-white active:opacity-80 disabled:opacity-40"
                 >
@@ -195,7 +200,9 @@ export default function StorePage() {
                   {r.cost} 分
                 </span>
                 <button
-                  onClick={() => act(r.id, `/api/rewards/${r.id}/redeem`, { method: "POST" })}
+                  onClick={() =>
+                    act(r.id, `/api/rewards/${r.id}/redeem`, { method: "POST" })
+                  }
                   disabled={balance < r.cost || busyId !== ""}
                   className="mt-3 rounded-full bg-primary py-2 text-sm font-semibold text-white active:opacity-80 disabled:opacity-40"
                 >
@@ -224,7 +231,11 @@ export default function StorePage() {
                   <p className="mt-0.5 text-xs text-muted">等 TA 兑现中…</p>
                 </div>
                 <button
-                  onClick={() => act(r.id, `/api/redemptions/${r.id}/cancel`, { method: "POST" })}
+                  onClick={() =>
+                    act(r.id, `/api/redemptions/${r.id}/cancel`, {
+                      method: "POST",
+                    })
+                  }
                   disabled={busyId !== ""}
                   className="shrink-0 rounded-full border border-border px-4 py-1.5 text-sm font-semibold text-muted active:opacity-80 disabled:opacity-40"
                 >
@@ -255,7 +266,9 @@ export default function StorePage() {
                 <p className="mt-0.5 text-xs text-muted">{r.cost} 分</p>
               </div>
               <button
-                onClick={() => act(r.id, `/api/rewards/${r.id}`, { method: "DELETE" })}
+                onClick={() =>
+                  act(r.id, `/api/rewards/${r.id}`, { method: "DELETE" })
+                }
                 disabled={busyId !== ""}
                 className="shrink-0 rounded-full border border-border px-4 py-1.5 text-sm font-semibold text-muted active:opacity-80 disabled:opacity-40"
               >
@@ -329,7 +342,9 @@ export default function StorePage() {
           <p className="font-semibold text-foreground">✊ 找 TA 猜拳</p>
           <p className="mt-0.5 text-xs text-muted">赌点积分，赢了归你</p>
         </div>
-        <span className="shrink-0 text-sm font-semibold text-primary">去 ›</span>
+        <span className="shrink-0 text-sm font-semibold text-primary">
+          去 ›
+        </span>
       </Link>
     </div>
   );

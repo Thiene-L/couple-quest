@@ -2,6 +2,7 @@
 
 import { Suspense, useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
+import BrandMark from "@/components/BrandMark";
 
 const MIN_PASSWORD_LENGTH = 10;
 const MAX_DISPLAY_NAME_LENGTH = 20;
@@ -43,7 +44,9 @@ function passwordError(value: string): string {
 function PageShell({ children }: { children: React.ReactNode }) {
   return (
     <main className="min-h-dvh bg-background">
-      <div className="mx-auto max-w-md px-4 pb-[calc(2.5rem+env(safe-area-inset-bottom))] pt-12">{children}</div>
+      <div className="mx-auto max-w-md px-4 pb-[calc(2.5rem+env(safe-area-inset-bottom))] pt-12">
+        {children}
+      </div>
     </main>
   );
 }
@@ -188,7 +191,7 @@ function JoinInner() {
   return (
     <PageShell>
       <div className="mb-6 text-center">
-        <div className="text-5xl">💌</div>
+        <BrandMark size={104} variant="full" className="mx-auto" />
         <h1 className="mt-3 text-2xl font-bold text-foreground">
           {inviterName} 邀请你一起玩 💞
         </h1>

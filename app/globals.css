@@ -1,25 +1,32 @@
 @import "tailwindcss";
 
-/* Hello Kitty 风配色：白底 + 蝴蝶结红为主，鼻子黄做点缀 */
+/* Hello Kitty 的视觉标识不是「粉」，是白脸 + 黑描边 + 红蝴蝶结 + 黄鼻子。
+   所以：卡片纯白、描边取近黑而非粉、红做主色、黄做点缀，
+   粉只用在底色和大面积浅色块上 */
 :root {
   color-scheme: light;
 
-  --background: #fff5f7; /* 极浅粉白 */
-  --foreground: #2f2226; /* 近黑，对应描边色 */
+  --background: #fff7f9; /* 暖白偏粉，不是饱和粉 */
+  --foreground: #241a1d; /* 描边黑，比纯黑柔一点 */
   --card: #ffffff; /* 纯白，像脸 */
   --primary: #e4002b; /* 蝴蝶结红 */
-  --primary-soft: #ffe1e8; /* 淡粉底 */
+  --primary-soft: #ffe3ea; /* 淡粉底 */
   --accent: #ffc800; /* 鼻子黄 */
-  --muted: #9c8288;
-  --border: #ffd9e2;
+  --muted: #8d7a80;
+  /* 描边用近黑的低透明度，而不是粉色边——线条感是这套形象的骨架 */
+  --border: rgba(36, 26, 29, 0.14);
+  --outline: rgba(36, 26, 29, 0.72); /* 需要强描边时用 */
 
-  /* 语义色：正负数、错误、提醒。深色下会整体换一套 */
   --success: #059669;
   --danger: #e4002b;
-  --danger-border: #ffb3c4;
+  --danger-border: rgba(228, 0, 43, 0.35);
   --danger-soft: #fff0f3;
-  --accent-border: #ffe08a;
+  --accent-border: rgba(255, 200, 0, 0.5);
   --accent-soft: #fffaeb;
+
+  /* 底纹：小蝴蝶结 + 圆点交错平铺，密度低到不抢内容 */
+  --pattern-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='96' height='96' viewBox='0 0 96 96'%3E%3Cg fill='%23000'%3E%3Cpath d='M22 27c0-6-7-9-11-4-3 5 1 10 6 8l5-4zm4 0c0-6 7-9 11-4 3 5-1 10-6 8l-5-4z'/%3E%3Cellipse cx='24' cy='27' rx='3.2' ry='3.6'/%3E%3Cpath d='M70 75c0-6-7-9-11-4-3 5 1 10 6 8l5-4zm4 0c0-6 7-9 11-4 3 5-1 10-6 8l-5-4z'/%3E%3Cellipse cx='72' cy='75' rx='3.2' ry='3.6'/%3E%3Ccircle cx='72' cy='25' r='2.6'/%3E%3Ccircle cx='24' cy='73' r='2.6'/%3E%3C/g%3E%3C/svg%3E");
+  --pattern-opacity: 0.06;
 }
 
 /* 深色主题：跟随系统 */
@@ -27,15 +34,17 @@
   :root {
     color-scheme: dark;
 
-    --background: #1c1417; /* 带粉调的深色，不用纯黑 */
-    --foreground: #f7ecef;
-    --card: #2b2024; /* 比背景亮一档，卡片能浮出来 */
+    --background: #1a1316; /* 带粉调的深色，不用纯黑 */
+    --foreground: #f9eef1;
+    --card: #292023; /* 比背景亮一档，卡片能浮出来 */
     /* 蝴蝶结红在深底上对比不够，提亮成粉红 */
     --primary: #ff6b8a;
     --primary-soft: rgba(255, 107, 138, 0.16);
     --accent: #ffd24d; /* 鼻子黄提亮 */
     --muted: #bda6ad;
-    --border: #48343a;
+    /* 深色下描边反过来用浅色，同样是「勾一条线」的作用 */
+    --border: rgba(249, 238, 241, 0.16);
+    --outline: rgba(249, 238, 241, 0.8);
 
     --success: #34d399;
     --danger: #ff7a94;
@@ -43,6 +52,8 @@
     --danger-soft: rgba(255, 122, 148, 0.12);
     --accent-border: rgba(255, 210, 77, 0.4);
     --accent-soft: rgba(255, 210, 77, 0.1);
+
+    --pattern-opacity: 0.09;
   }
 }
 
@@ -80,11 +91,33 @@
 }
 
 @layer base {
-  /* 橡皮筋滚动露出的底色也跟随主题 */
-  html,
-  body {
+  /* 底色只给 html：它会传播到画布，橡皮筋滚动露出的也是这个色。
+     body 必须保持透明，否则它的元素背景会盖住下面 z-index:-1 的底纹 */
+  html {
     background-color: var(--background);
+  }
+
+  body {
+    background-color: transparent;
     color: var(--foreground);
+  }
+
+  /* 底纹：小蝴蝶结 + 圆点交错平铺。fixed 让它在滚动时不动，
+     像一层壁纸而不是跟着内容跑的贴图 */
+  body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+    opacity: var(--pattern-opacity);
+    /* 用遮罩而不是 background-image：CSS 变量插不进 url() 里，
+       改成「主题色填充 + 图形当遮罩」，墨色就能跟着主题走 */
+    background-color: var(--primary);
+    -webkit-mask-image: var(--pattern-mask);
+    mask-image: var(--pattern-mask);
+    -webkit-mask-size: 96px 96px;
+    mask-size: 96px 96px;
   }
 
   /* 输入框占位符 */
