@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import BrandMark from "@/components/BrandMark";
 
 // 只留五个高频入口。下面这些从别处进：
 //   时光/纪念日/成就 → 任务页顶部    账本/猜拳 → 商店页
@@ -27,7 +28,7 @@ export default function BottomNav() {
       <aside className="fixed inset-y-0 left-0 z-50 hidden w-56 flex-col border-r border-border bg-card/80 backdrop-blur md:flex">
         {/* iPad 装成 PWA 时侧栏也要让开状态栏 */}
         <div className="flex items-center gap-2 px-6 pb-2 pt-[calc(2rem+env(safe-area-inset-top))]">
-          <span className="text-2xl">🎀</span>
+          <BrandMark size={28} />
           <span className="text-lg font-bold text-foreground">
             Couple Quest
           </span>

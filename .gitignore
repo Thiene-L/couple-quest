@@ -44,3 +44,9 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# 用户自备的品牌素材：部署时从本地上传，不进公开仓库
+/public/logo.svg
+/public/icon-192.png
+/public/icon-512.png
+/public/apple-touch-icon.png

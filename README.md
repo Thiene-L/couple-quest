@@ -75,3 +75,16 @@ D1 导出（建议偶尔跑一次存好）：
 ```bash
 npx wrangler d1 export couple-quest --remote --output backup.sql
 ```
+
+## 品牌素材
+
+`public/logo.svg` 和 `public/icon-*.png` 不在版本库里（见 `.gitignore`）——
+它们是使用者自备的美术资源，仓库公开，不适合随代码分发。部署时 wrangler
+从本地磁盘上传，照常生效。
+
+新克隆一份代码时这些文件不存在：登录页和侧栏会自动回落到 🎀 emoji，
+PWA 图标则需要自己放一份。想重新生成一套自制图标：
+
+```bash
+node scripts/gen-icons.mjs
+```
