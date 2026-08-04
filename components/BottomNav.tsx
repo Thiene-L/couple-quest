@@ -3,12 +3,12 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
-// 账本不在主导航里：从商店的余额卡片和「我的」页进入
+// 只留五个高频入口。下面这些从别处进：
+//   时光/纪念日/成就 → 任务页顶部    账本/猜拳 → 商店页
 const TABS = [
   { href: "/tasks", label: "任务", icon: "📋" },
   { href: "/chat", label: "聊天", icon: "💬" },
   { href: "/daily", label: "每日", icon: "💭" },
-  { href: "/moments", label: "时光", icon: "📸" },
   { href: "/store", label: "商店", icon: "🎁" },
   { href: "/me", label: "我的", icon: "🐻" },
 ] as const;
@@ -27,7 +27,7 @@ export default function BottomNav() {
       <aside className="fixed inset-y-0 left-0 z-50 hidden w-56 flex-col border-r border-border bg-card/80 backdrop-blur md:flex">
         {/* iPad 装成 PWA 时侧栏也要让开状态栏 */}
         <div className="flex items-center gap-2 px-6 pb-2 pt-[calc(2rem+env(safe-area-inset-top))]">
-          <span className="text-2xl">💞</span>
+          <span className="text-2xl">🎀</span>
           <span className="text-lg font-bold text-foreground">
             Couple Quest
           </span>
@@ -53,7 +53,7 @@ export default function BottomNav() {
           })}
         </nav>
         <div className="mt-auto px-6 pb-6 text-xs text-muted">
-          为我们俩定制 💕
+          为我们俩定制 🎀
         </div>
       </aside>
 
@@ -67,11 +67,11 @@ export default function BottomNav() {
                 key={tab.href}
                 href={tab.href}
                 aria-current={active ? "page" : undefined}
-                className={`flex min-w-0 flex-1 flex-col items-center gap-0.5 px-0.5 py-2 text-[10px] leading-none ${
+                className={`flex min-w-0 flex-1 flex-col items-center gap-0.5 px-1 py-2 text-[11px] leading-none ${
                   active ? "font-semibold text-primary" : "text-muted"
                 }`}
               >
-                <span className="text-[17px] leading-none">{tab.icon}</span>
+                <span className="text-lg leading-none">{tab.icon}</span>
                 <span className="truncate">{tab.label}</span>
               </Link>
             );

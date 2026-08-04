@@ -113,7 +113,7 @@ export default function LoginPage() {
     <main className="min-h-dvh bg-background">
       <div className="mx-auto max-w-md px-4 pb-[calc(2.5rem+env(safe-area-inset-bottom))] pt-16">
         <div className="mb-8 text-center">
-          <div className="text-5xl">💕</div>
+          <div className="text-5xl">🎀</div>
           <h1 className="mt-3 text-3xl font-bold text-foreground">
             Couple Quest
           </h1>

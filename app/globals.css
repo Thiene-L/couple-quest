@@ -1,25 +1,25 @@
 @import "tailwindcss";
 
-/* 浅色主题（默认） */
+/* Hello Kitty 风配色：白底 + 蝴蝶结红为主，鼻子黄做点缀 */
 :root {
   color-scheme: light;
 
-  --background: #fdf7f9;
-  --foreground: #3d2c35;
-  --card: #ffffff;
-  --primary: #ec4899; /* pink-500 */
-  --primary-soft: #fce7f3; /* pink-100 */
-  --accent: #f59e0b; /* amber-500 */
-  --muted: #9d8a94;
-  --border: #f3dce7;
+  --background: #fff5f7; /* 极浅粉白 */
+  --foreground: #2f2226; /* 近黑，对应描边色 */
+  --card: #ffffff; /* 纯白，像脸 */
+  --primary: #e4002b; /* 蝴蝶结红 */
+  --primary-soft: #ffe1e8; /* 淡粉底 */
+  --accent: #ffc800; /* 鼻子黄 */
+  --muted: #9c8288;
+  --border: #ffd9e2;
 
   /* 语义色：正负数、错误、提醒。深色下会整体换一套 */
   --success: #059669;
-  --danger: #f43f5e;
-  --danger-border: #fda4af;
-  --danger-soft: #fff1f2;
-  --accent-border: #fde68a;
-  --accent-soft: #fffbeb;
+  --danger: #e4002b;
+  --danger-border: #ffb3c4;
+  --danger-soft: #fff0f3;
+  --accent-border: #ffe08a;
+  --accent-soft: #fffaeb;
 }
 
 /* 深色主题：跟随系统 */
@@ -27,21 +27,22 @@
   :root {
     color-scheme: dark;
 
-    --background: #1a1418; /* 带暖粉调的深色，不用纯黑 */
-    --foreground: #f2e8ee; /* 柔和的浅色，不用纯白 */
-    --card: #2a2027; /* 比背景亮一档，卡片能浮出来 */
-    --primary: #f472b6; /* 提亮的粉，深底上够对比 */
-    --primary-soft: rgba(244, 114, 182, 0.14); /* 深色调的粉，不是亮粉色块 */
-    --accent: #fbbf24;
-    --muted: #b6a3ae;
-    --border: #42313a;
+    --background: #1c1417; /* 带粉调的深色，不用纯黑 */
+    --foreground: #f7ecef;
+    --card: #2b2024; /* 比背景亮一档，卡片能浮出来 */
+    /* 蝴蝶结红在深底上对比不够，提亮成粉红 */
+    --primary: #ff6b8a;
+    --primary-soft: rgba(255, 107, 138, 0.16);
+    --accent: #ffd24d; /* 鼻子黄提亮 */
+    --muted: #bda6ad;
+    --border: #48343a;
 
     --success: #34d399;
-    --danger: #fb7185;
-    --danger-border: rgba(251, 113, 133, 0.45);
-    --danger-soft: rgba(251, 113, 133, 0.12);
-    --accent-border: rgba(251, 191, 36, 0.4);
-    --accent-soft: rgba(251, 191, 36, 0.1);
+    --danger: #ff7a94;
+    --danger-border: rgba(255, 122, 148, 0.45);
+    --danger-soft: rgba(255, 122, 148, 0.12);
+    --accent-border: rgba(255, 210, 77, 0.4);
+    --accent-soft: rgba(255, 210, 77, 0.1);
   }
 }
 

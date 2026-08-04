@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import BackLink from "@/components/BackLink";
 
 interface LedgerEntry {
   id: string;
@@ -40,6 +41,7 @@ export default function LedgerPage() {
   if (loading) {
     return (
       <div className="mx-auto w-full max-w-md md:max-w-2xl px-4 md:px-6 py-6">
+        <BackLink href="/store" />
         <h1 className="text-2xl font-bold text-foreground">账本</h1>
         <div className="mt-4 grid grid-cols-2 gap-3">
           <div className="h-24 animate-pulse rounded-2xl bg-primary-soft" />
@@ -52,6 +54,7 @@ export default function LedgerPage() {
 
   return (
     <div className="mx-auto w-full max-w-md md:max-w-2xl px-4 md:px-6 py-6">
+      <BackLink href="/store" />
       <h1 className="text-2xl font-bold text-foreground">账本</h1>
 
       {/* 两人余额 */}

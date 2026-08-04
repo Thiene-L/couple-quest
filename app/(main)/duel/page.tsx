@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
+import BackLink from "@/components/BackLink";
 
 type Move = "rock" | "paper" | "scissors";
 type Result = "win" | "lose" | "draw";
@@ -99,9 +100,10 @@ export default function DuelPage() {
         headers: body ? { "Content-Type": "application/json" } : undefined,
         body: body ? JSON.stringify(body) : undefined,
       });
-      const payload = (await res.json().catch(() => null)) as
-        | Record<string, unknown>
-        | null;
+      const payload = (await res.json().catch(() => null)) as Record<
+        string,
+        unknown
+      > | null;
       if (!res.ok) {
         setError(
           typeof payload?.error === "string"
@@ -141,6 +143,7 @@ export default function DuelPage() {
   if (loading) {
     return (
       <div className="mx-auto w-full max-w-md md:max-w-2xl px-4 md:px-6 py-6">
+        <BackLink href="/store" />
         <h1 className="text-2xl font-bold text-foreground">猜拳</h1>
         <div className="mt-4 h-40 animate-pulse rounded-2xl bg-primary-soft" />
         <div className="mt-4 h-24 animate-pulse rounded-2xl bg-primary-soft/60" />
@@ -157,6 +160,7 @@ export default function DuelPage() {
 
   return (
     <div className="mx-auto w-full max-w-md md:max-w-2xl px-4 md:px-6 py-6">
+      <BackLink href="/store" />
       <h1 className="text-2xl font-bold text-foreground">猜拳</h1>
 
       {error && (
@@ -363,7 +367,11 @@ export default function DuelPage() {
                         : "text-muted"
                   }`}
                 >
-                  {d.result === "win" ? "赢" : d.result === "lose" ? "输" : "平"}
+                  {d.result === "win"
+                    ? "赢"
+                    : d.result === "lose"
+                      ? "输"
+                      : "平"}
                 </span>
                 <span className="shrink-0 text-xs text-muted">
                   {d.stake > 0 ? `${d.stake} 分` : "友谊赛"}

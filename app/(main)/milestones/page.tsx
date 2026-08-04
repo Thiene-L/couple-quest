@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
+import BackLink from "@/components/BackLink";
 
 interface Together {
   id: string;
@@ -187,6 +188,7 @@ export default function MilestonesPage() {
 
   return (
     <div className="mx-auto w-full max-w-md px-4 py-6 md:max-w-2xl md:px-6">
+      <BackLink href="/tasks" />
       <h1 className="text-2xl font-bold text-foreground">纪念日</h1>
 
       {error && (
@@ -262,9 +264,7 @@ export default function MilestonesPage() {
           </div>
 
           {/* 纪念日列表 */}
-          <h2 className="mt-6 text-sm font-semibold text-foreground">
-            倒数中
-          </h2>
+          <h2 className="mt-6 text-sm font-semibold text-foreground">倒数中</h2>
           {upcoming.length === 0 ? (
             <div className="mt-2 rounded-2xl border border-border bg-card p-4 text-center text-sm text-muted shadow-sm">
               还没有纪念日，添加生日、纪念日或想一起去旅行的日子吧～
@@ -278,7 +278,9 @@ export default function MilestonesPage() {
                     u.expired ? "opacity-50" : ""
                   }`}
                 >
-                  <span className="text-2xl leading-none">{u.emoji ?? "📅"}</span>
+                  <span className="text-2xl leading-none">
+                    {u.emoji ?? "📅"}
+                  </span>
                   <div className="min-w-0 flex-1">
                     <p className="truncate font-semibold text-foreground">
                       {u.title}

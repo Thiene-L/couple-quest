@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import ReactionBar from "@/components/ReactionBar";
+import BackLink from "@/components/BackLink";
 
 interface MomentItem {
   id: string;
@@ -166,6 +167,7 @@ export default function MomentsPage() {
   if (loading) {
     return (
       <div className="mx-auto w-full max-w-md md:max-w-2xl px-4 md:px-6 py-6">
+        <BackLink href="/tasks" />
         <h1 className="text-2xl font-bold text-foreground">我们的时光</h1>
         <div className="mt-2 h-4 w-40 animate-pulse rounded-full bg-primary-soft" />
         <div className="mt-4 hidden gap-3 md:grid md:grid-cols-3">
@@ -191,6 +193,7 @@ export default function MomentsPage() {
 
   return (
     <div className="mx-auto w-full max-w-md md:max-w-2xl px-4 md:px-6 py-6">
+      <BackLink href="/tasks" />
       <h1 className="text-2xl font-bold text-foreground">我们的时光</h1>
       <p className="mt-1 text-sm text-muted">
         共 {total} 个瞬间 · {withPhoto} 张照片
@@ -199,7 +202,11 @@ export default function MomentsPage() {
       {/* 宽屏多给一排统计卡，窄屏只留上面那行小字 */}
       <div className="mt-4 hidden gap-3 md:grid md:grid-cols-3">
         <StatCard label="瞬间" value={`${total} 个`} hint="确认过的打卡" />
-        <StatCard label="照片" value={`${withPhoto} 张`} hint="留下影像的瞬间" />
+        <StatCard
+          label="照片"
+          value={`${withPhoto} 张`}
+          hint="留下影像的瞬间"
+        />
         <StatCard
           label="一切开始于"
           value={firstAt ? dayLabel(new Date(firstAt)) : "还没开始"}

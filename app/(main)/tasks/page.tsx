@@ -330,6 +330,22 @@ export default function TasksPage() {
         </Link>
       )}
 
+      {/* 时光和成就不占底部标签位，从这里进 */}
+      <div className="mt-2 grid grid-cols-2 gap-2">
+        <Link
+          href="/moments"
+          className="flex items-center justify-center gap-1.5 rounded-xl border border-border bg-card px-3 py-2 text-sm text-foreground shadow-sm active:opacity-80"
+        >
+          <span>📸</span> 时光
+        </Link>
+        <Link
+          href="/achievements"
+          className="flex items-center justify-center gap-1.5 rounded-xl border border-border bg-card px-3 py-2 text-sm text-foreground shadow-sm active:opacity-80"
+        >
+          <span>🏆</span> 成就
+        </Link>
+      </div>
+
       <div className="mt-3">
         <PokeButton />
       </div>
