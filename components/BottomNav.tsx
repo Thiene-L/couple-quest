@@ -3,10 +3,12 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
+// 账本不在主导航里：从商店的余额卡片和「我的」页进入
 const TABS = [
   { href: "/tasks", label: "任务", icon: "📋" },
+  { href: "/daily", label: "每日", icon: "💭" },
+  { href: "/moments", label: "时光", icon: "📸" },
   { href: "/store", label: "商店", icon: "🎁" },
-  { href: "/ledger", label: "账本", icon: "💰" },
   { href: "/me", label: "我的", icon: "🐻" },
 ] as const;
 
@@ -35,6 +37,7 @@ export default function BottomNav() {
               <Link
                 key={tab.href}
                 href={tab.href}
+                aria-current={active ? "page" : undefined}
                 className={`flex items-center gap-3 rounded-xl px-4 py-2.5 text-[15px] transition-colors ${
                   active
                     ? "bg-primary-soft font-semibold text-primary"
@@ -52,7 +55,7 @@ export default function BottomNav() {
         </div>
       </aside>
 
-      {/* 移动端底部 tab */}
+      {/* 移动端底部 tab：5 个均分，图标和字号收窄保证一行放得下 */}
       <nav className="fixed inset-x-0 bottom-0 z-50 border-t border-border bg-card/95 pb-[env(safe-area-inset-bottom)] backdrop-blur md:hidden">
         <div className="mx-auto flex max-w-md">
           {TABS.map((tab) => {
@@ -61,12 +64,13 @@ export default function BottomNav() {
               <Link
                 key={tab.href}
                 href={tab.href}
-                className={`flex flex-1 flex-col items-center gap-0.5 py-2 text-xs ${
+                aria-current={active ? "page" : undefined}
+                className={`flex min-w-0 flex-1 flex-col items-center gap-0.5 px-1 py-2 text-[11px] leading-none ${
                   active ? "font-semibold text-primary" : "text-muted"
                 }`}
               >
-                <span className="text-xl leading-none">{tab.icon}</span>
-                {tab.label}
+                <span className="text-lg leading-none">{tab.icon}</span>
+                <span className="truncate">{tab.label}</span>
               </Link>
             );
           })}

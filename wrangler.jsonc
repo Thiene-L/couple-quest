@@ -1,7 +1,8 @@
 {
   "$schema": "node_modules/wrangler/config-schema.json",
   "name": "couple-quest",
-  "main": ".open-next/worker.js",
+  // 自定义入口：复用 OpenNext 的 fetch，另挂 scheduled 跑定时提醒
+  "main": "custom-worker.ts",
   "compatibility_date": "2025-06-01",
   "compatibility_flags": ["nodejs_compat", "global_fetch_strictly_public"],
   // workers.dev 地址留着当备用入口
@@ -12,6 +13,10 @@
   "assets": {
     "directory": ".open-next/assets",
     "binding": "ASSETS"
+  },
+  // 每小时整点跑一次提醒；具体发不发由 reminder_log 去重决定
+  "triggers": {
+    "crons": ["0 * * * *"]
   },
   "d1_databases": [
     {

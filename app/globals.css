@@ -1,6 +1,9 @@
 @import "tailwindcss";
 
+/* 浅色主题（默认） */
 :root {
+  color-scheme: light;
+
   --background: #fdf7f9;
   --foreground: #3d2c35;
   --card: #ffffff;
@@ -9,6 +12,37 @@
   --accent: #f59e0b; /* amber-500 */
   --muted: #9d8a94;
   --border: #f3dce7;
+
+  /* 语义色：正负数、错误、提醒。深色下会整体换一套 */
+  --success: #059669;
+  --danger: #f43f5e;
+  --danger-border: #fda4af;
+  --danger-soft: #fff1f2;
+  --accent-border: #fde68a;
+  --accent-soft: #fffbeb;
+}
+
+/* 深色主题：跟随系统 */
+@media (prefers-color-scheme: dark) {
+  :root {
+    color-scheme: dark;
+
+    --background: #1a1418; /* 带暖粉调的深色，不用纯黑 */
+    --foreground: #f2e8ee; /* 柔和的浅色，不用纯白 */
+    --card: #2a2027; /* 比背景亮一档，卡片能浮出来 */
+    --primary: #f472b6; /* 提亮的粉，深底上够对比 */
+    --primary-soft: rgba(244, 114, 182, 0.14); /* 深色调的粉，不是亮粉色块 */
+    --accent: #fbbf24;
+    --muted: #b6a3ae;
+    --border: #42313a;
+
+    --success: #34d399;
+    --danger: #fb7185;
+    --danger-border: rgba(251, 113, 133, 0.45);
+    --danger-soft: rgba(251, 113, 133, 0.12);
+    --accent-border: rgba(251, 191, 36, 0.4);
+    --accent-soft: rgba(251, 191, 36, 0.1);
+  }
 }
 
 @theme inline {
@@ -20,9 +54,34 @@
   --color-accent: var(--accent);
   --color-muted: var(--muted);
   --color-border: var(--border);
+
+  /* 页面里已在用的固定色板，改成跟随主题的语义色 */
+  --color-green-600: var(--success);
+  --color-emerald-600: var(--success);
+  --color-rose-500: var(--danger);
+  --color-rose-300: var(--danger-border);
+  --color-rose-50: var(--danger-soft);
+  --color-amber-200: var(--accent-border);
+  --color-amber-50: var(--accent-soft);
+
   --font-sans:
     -apple-system, BlinkMacSystemFont, "PingFang SC", "Hiragino Sans GB",
     "Noto Sans CJK SC", "Microsoft YaHei", sans-serif;
+}
+
+@layer base {
+  /* 橡皮筋滚动露出的底色也跟随主题 */
+  html,
+  body {
+    background-color: var(--background);
+    color: var(--foreground);
+  }
+
+  /* 输入框占位符 */
+  ::placeholder {
+    color: var(--muted);
+    opacity: 1;
+  }
 }
 
 body {

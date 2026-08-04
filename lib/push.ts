@@ -12,13 +12,14 @@ export interface PushPayload {
   tag?: string;
 }
 
-// 推送失败但不该让业务请求失败：调用方用 ctx.waitUntil 把它丢到后台
-export async function notifyUser(
+// 显式传 env 的版本：定时任务跑在 scheduled 处理器里没有请求上下文，
+// getCloudflareContext() 拿不到 env，只能由调用方把它传进来
+export async function sendPushTo(
+  env: CloudflareEnv,
   db: Db,
   userId: string,
   payload: PushPayload,
 ): Promise<void> {
-  const env = await getEnv();
   if (!env.VAPID_PUBLIC_KEY || !env.VAPID_PRIVATE_KEY) return;
 
   const subs = await db
@@ -68,6 +69,16 @@ export async function notifyUser(
       .delete(pushSubscriptions)
       .where(inArray(pushSubscriptions.endpoint, dead));
   }
+}
+
+// 请求上下文里用这个：env 从 getCloudflareContext 拿
+export async function notifyUser(
+  db: Db,
+  userId: string,
+  payload: PushPayload,
+): Promise<void> {
+  const env = await getEnv();
+  await sendPushTo(env, db, userId, payload);
 }
 
 // 业务路由用这个：拿到 ctx 后把推送丢到响应之后跑，不拖慢接口

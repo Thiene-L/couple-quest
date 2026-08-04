@@ -30,5 +30,7 @@
     ".next/dev/types/**/*.ts",
     "**/*.mts"
   ],
-  "exclude": ["node_modules"]
+  // custom-worker.ts 引用的 .open-next/worker.js 要等 OpenNext 构建后才存在，
+  // 留在检查范围里会让 next build 先一步失败；它由 wrangler 打包时处理
+  "exclude": ["node_modules", "custom-worker.ts"]
 }

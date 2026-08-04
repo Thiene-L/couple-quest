@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useCallback, useEffect, useRef, useState } from "react";
+import MilestoneBanner from "@/components/MilestoneBanner";
 
 interface Me {
   id: string;
@@ -303,6 +304,8 @@ export default function TasksPage() {
         Hi，{me?.displayName ?? ""} 💕
       </h1>
       <p className="mt-1 text-sm text-muted">{todayStr}</p>
+
+      <MilestoneBanner />
 
       {error && (
         <div className="mt-4 rounded-xl border border-accent bg-card px-3 py-2 text-sm text-accent">

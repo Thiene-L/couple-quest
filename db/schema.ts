@@ -191,6 +191,63 @@ export const invites = sqliteTable("invites", {
   usedBy: text("used_by"),
 });
 
+// 纪念日。kind=together 是「在一起」那天，全局唯一，用于算在一起第几天；
+// anniversary 每年重复（生日、纪念日），countdown 是一次性倒数（旅行、考试）
+export const milestones = sqliteTable(
+  "milestones",
+  {
+    id: text("id").primaryKey(),
+    createdBy: text("created_by")
+      .notNull()
+      .references(() => users.id),
+    title: text("title").notNull(),
+    // 本地日期 YYYY-MM-DD，不存时间戳：纪念日是「哪一天」而非「哪一刻」，
+    // 存时间戳会因时区把日期算偏
+    date: text("date").notNull(),
+    kind: text("kind", {
+      enum: ["together", "anniversary", "countdown"],
+    }).notNull(),
+    emoji: text("emoji"),
+    createdAt: integer("created_at", { mode: "timestamp_ms" }).notNull(),
+  },
+  (t) => [index("milestones_kind_idx").on(t.kind)],
+);
+
+// 每日一问：题目 + 两人各自的回答。都答完才互相可见
+export const dailyQuestions = sqliteTable(
+  "daily_questions",
+  {
+    id: text("id").primaryKey(),
+    dayKey: text("day_key").notNull().unique(), // Asia/Shanghai YYYY-MM-DD
+    question: text("question").notNull(),
+    createdAt: integer("created_at", { mode: "timestamp_ms" }).notNull(),
+  },
+  (t) => [index("daily_questions_day_idx").on(t.dayKey)],
+);
+
+export const dailyAnswers = sqliteTable(
+  "daily_answers",
+  {
+    id: text("id").primaryKey(),
+    questionId: text("question_id")
+      .notNull()
+      .references(() => dailyQuestions.id),
+    userId: text("user_id")
+      .notNull()
+      .references(() => users.id),
+    answer: text("answer").notNull(),
+    createdAt: integer("created_at", { mode: "timestamp_ms" }).notNull(),
+  },
+  // 一人一题只能答一次
+  (t) => [uniqueIndex("daily_answers_uniq").on(t.questionId, t.userId)],
+);
+
+// 定时任务的发送去重：同一天同一类提醒只发一次
+export const reminderLog = sqliteTable("reminder_log", {
+  key: text("key").primaryKey(), // 形如 daily-task:{userId}:{dayKey}
+  sentAt: integer("sent_at", { mode: "timestamp_ms" }).notNull(),
+});
+
 // 登录失败计数，用于限流
 export const loginAttempts = sqliteTable("login_attempts", {
   key: text("key").primaryKey(), // 用户名或来源 IP

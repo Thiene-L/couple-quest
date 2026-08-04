@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useCallback, useEffect, useState } from "react";
 
 interface RewardItem {
@@ -124,12 +125,18 @@ export default function StorePage() {
     <div className="mx-auto w-full max-w-md md:max-w-2xl px-4 md:px-6 py-6">
       <h1 className="text-2xl font-bold text-foreground">商店</h1>
 
-      {/* 余额卡 */}
-      <div className="mt-4 rounded-2xl bg-gradient-to-r from-primary to-accent p-5 text-white shadow-sm">
+      {/* 余额卡：整张卡片点进积分明细 */}
+      <Link
+        href="/ledger"
+        className="relative mt-4 block rounded-2xl bg-gradient-to-r from-primary to-accent p-5 text-white shadow-sm active:opacity-80"
+      >
+        <span className="absolute right-4 top-4 rounded-full border border-current px-2.5 py-1 text-xs font-semibold opacity-90">
+          明细 ›
+        </span>
         <p className="text-sm opacity-90">我的积分</p>
         <p className="mt-1 text-4xl font-bold">{balance}</p>
         <p className="mt-1 text-xs opacity-80">完成任务赚积分，兑换 TA 的宠爱</p>
-      </div>
+      </Link>
 
       {error && (
         <p className="mt-3 rounded-2xl bg-rose-50 px-4 py-2 text-sm text-rose-500">
