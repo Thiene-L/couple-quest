@@ -6,6 +6,10 @@
 :root {
   color-scheme: light;
 
+  /* 顶部安全区（灵动岛/刘海）。抽成变量便于统一引用；
+     非 iOS 上 env() 为 0 */
+  --safe-top: env(safe-area-inset-top);
+
   --background: #fff7f9; /* 暖白偏粉，不是饱和粉 */
   --foreground: #241a1d; /* 描边黑，比纯黑柔一点 */
   --card: #ffffff; /* 纯白，像脸 */
@@ -84,9 +88,9 @@
 @layer utilities {
   /* body 让出了顶部安全区，满屏高度要相应减掉，
      否则每个用 min-h-dvh 的页面都会凭空多出一条滚动。
-     非 iOS 上 env() 为 0，等价于原来的 100dvh */
+     非 iOS 上 --safe-top 为 0，等价于原来的 100dvh */
   .min-h-dvh {
-    min-height: calc(100dvh - env(safe-area-inset-top));
+    min-height: calc(100dvh - var(--safe-top));
   }
 }
 
@@ -120,6 +124,22 @@
     mask-size: 96px 96px;
   }
 
+  /* 顶部安全区遮罩条。body 的 padding-top 只管住了首屏位置，
+     一滚动内容就会从灵动岛/刘海底下穿过去。这条不透明的固定色带
+     铺满安全区高度，内容从它背后经过，被干净地切掉。
+     非 iOS 上高度为 0，完全无副作用 */
+  body::after {
+    content: "";
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: var(--safe-top);
+    z-index: 60; /* 高于吸顶标题(z-10)与底部导航(z-50) */
+    background-color: var(--background);
+    pointer-events: none;
+  }
+
   /* 输入框占位符 */
   ::placeholder {
     color: var(--muted);
@@ -132,7 +152,7 @@ body {
   /* viewport-fit=cover 后内容会铺到刘海和 Home 指示条下面。
      顶部和左右在这里统一让开；底部由固定导航栏和各页容器各自处理，
      在这里加会和导航栏的内边距叠成双份空白 */
-  padding-top: env(safe-area-inset-top);
+  padding-top: var(--safe-top);
   padding-left: env(safe-area-inset-left);
   padding-right: env(safe-area-inset-right);
 }

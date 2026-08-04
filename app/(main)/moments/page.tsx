@@ -243,7 +243,7 @@ export default function MomentsPage() {
               {/* 日期分组标题：滚动时吸顶 */}
               {/* 吸顶位置要让开状态栏：sticky 的 top 是相对视口算的，
                   写 0 会滑到刘海底下 */}
-              <div className="sticky top-[env(safe-area-inset-top)] z-10 -mx-4 flex flex-wrap items-baseline gap-x-2 bg-background/90 px-4 py-2 backdrop-blur md:-mx-6 md:px-6">
+              <div className="sticky top-[var(--safe-top)] z-10 -mx-4 flex flex-wrap items-baseline gap-x-2 bg-background/90 px-4 py-2 backdrop-blur md:-mx-6 md:px-6">
                 <h2 className="text-sm font-semibold text-foreground">
                   {g.label}
                 </h2>
