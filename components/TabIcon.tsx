@@ -9,26 +9,27 @@ function Bow({ cx, cy, s = 1 }: { cx: number; cy: number; s?: number }) {
   return (
     <g transform={`translate(${cx} ${cy}) scale(${s})`}>
       <path
-        d="M-2 0C-2-5-8-8-11-5S-9 3-2 2Z"
+        d="M-2.6 0.5C-4-5.5-8.5-8-11-6.2c-2.6 1.9-2.2 6.4.6 7.9 2.2 1.2 5.4.6 7.8-1.6Z"
         fill="var(--kitty-bow)"
         stroke="currentColor"
-        strokeWidth="1.6"
+        strokeWidth="1.7"
         strokeLinejoin="round"
       />
       <path
-        d="M2 0C2-5 8-8 11-5S9 3 2 2Z"
+        d="M2.6 0.5C4-5.5 8.5-8 11-6.2c2.6 1.9 2.2 6.4-.6 7.9-2.2 1.2-5.4.6-7.8-1.6Z"
         fill="var(--kitty-bow)"
         stroke="currentColor"
-        strokeWidth="1.6"
+        strokeWidth="1.7"
         strokeLinejoin="round"
       />
-      <circle
+      <ellipse
         cx="0"
-        cy="0.5"
-        r="2.4"
+        cy="0"
+        rx="2.9"
+        ry="3.1"
         fill="var(--kitty-bow)"
         stroke="currentColor"
-        strokeWidth="1.6"
+        strokeWidth="1.7"
       />
     </g>
   );
@@ -108,11 +109,28 @@ const SHAPES: Record<Name, React.ReactNode> = {
       <Bow cx={16} cy={11} s={0.95} />
     </>
   ),
-  // 我的：单独一个蝴蝶结，是这套形象最标志性的记号
+  // 我的：头像轮廓 + 头顶正中的蝴蝶结（当发饰）。
+  // 试过把结放在侧上角，会压着头的轮廓显得头变形；
+  // 单独放一个大蝴蝶结在这个尺寸下又太宽，会看成蝴蝶
   me: (
-    <g transform="translate(0 3)">
-      <Bow cx={16} cy={16} s={1.75} />
-    </g>
+    <>
+      <path
+        d="M6.5 28.5c0-5.2 4.3-8 9.5-8s9.5 2.8 9.5 8Z"
+        fill="var(--kitty-fill)"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinejoin="round"
+      />
+      <circle
+        cx="16"
+        cy="16"
+        r="5.2"
+        fill="var(--kitty-fill)"
+        stroke="currentColor"
+        strokeWidth="2"
+      />
+      <Bow cx={16} cy={8.5} s={0.72} />
+    </>
   ),
   // 时光：相机
   moments: (

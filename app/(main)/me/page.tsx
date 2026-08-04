@@ -5,6 +5,7 @@ import { useEffect, useRef, useState } from "react";
 import PasskeyEnrollButton from "@/components/PasskeyEnrollButton";
 import PushEnrollButton from "@/components/PushEnrollButton";
 import BrandMark from "@/components/BrandMark";
+import TabIcon from "@/components/TabIcon";
 
 interface MeData {
   partnerName: string;
@@ -233,9 +234,7 @@ export default function MePage() {
         href="/achievements"
         className="mt-6 flex items-center gap-3 rounded-2xl border border-border bg-card p-4 shadow-sm active:opacity-80"
       >
-        <span aria-hidden className="text-2xl leading-none">
-          🏆
-        </span>
+        <TabIcon name="trophy" size={26} className="shrink-0 text-primary" />
         <span className="min-w-0 flex-1">
           <span className="block font-semibold text-foreground">
             成就与火花
