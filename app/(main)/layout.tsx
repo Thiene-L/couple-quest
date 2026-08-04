@@ -13,7 +13,10 @@ export default async function MainLayout({
 
   return (
     <div className="flex min-h-dvh flex-col">
-      <main className="flex-1 pb-20 md:pb-10 md:pl-56">{children}</main>
+      {/* 底部留出导航栏高度 + Home 指示条，最后一张卡片不会被挡 */}
+      <main className="flex-1 pb-[calc(5rem+env(safe-area-inset-bottom))] md:pb-10 md:pl-56">
+        {children}
+      </main>
       <BottomNav />
     </div>
   );

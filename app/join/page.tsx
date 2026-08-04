@@ -43,7 +43,7 @@ function passwordError(value: string): string {
 function PageShell({ children }: { children: React.ReactNode }) {
   return (
     <main className="min-h-dvh bg-background">
-      <div className="mx-auto max-w-md px-4 pb-10 pt-12">{children}</div>
+      <div className="mx-auto max-w-md px-4 pb-[calc(2.5rem+env(safe-area-inset-bottom))] pt-12">{children}</div>
     </main>
   );
 }

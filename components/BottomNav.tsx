@@ -24,7 +24,8 @@ export default function BottomNav() {
     <>
       {/* 桌面左侧栏 */}
       <aside className="fixed inset-y-0 left-0 z-50 hidden w-56 flex-col border-r border-border bg-card/80 backdrop-blur md:flex">
-        <div className="flex items-center gap-2 px-6 pb-2 pt-8">
+        {/* iPad 装成 PWA 时侧栏也要让开状态栏 */}
+        <div className="flex items-center gap-2 px-6 pb-2 pt-[calc(2rem+env(safe-area-inset-top))]">
           <span className="text-2xl">💞</span>
           <span className="text-lg font-bold text-foreground">
             Couple Quest

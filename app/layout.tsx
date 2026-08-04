@@ -16,6 +16,9 @@ export const viewport: Viewport = {
   initialScale: 1,
   maximumScale: 1,
   userScalable: false,
+  // 必须是 cover，否则 iOS 上 env(safe-area-inset-*) 恒为 0，
+  // 底部导航会被 Home 指示条压住
+  viewportFit: "cover",
   themeColor: [
     { media: "(prefers-color-scheme: light)", color: "#fdf2f8" },
     { media: "(prefers-color-scheme: dark)", color: "#1a1418" },

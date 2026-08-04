@@ -488,7 +488,7 @@ export default function TasksPage() {
       <Link
         href="/tasks/new"
         aria-label="新建任务"
-        className="fixed bottom-24 right-5 z-40 flex h-14 w-14 items-center justify-center rounded-full bg-primary text-3xl text-white shadow-lg active:opacity-80"
+        className="fixed bottom-[calc(6rem+env(safe-area-inset-bottom))] right-5 z-40 flex h-14 w-14 items-center justify-center rounded-full bg-primary text-3xl text-white shadow-lg active:opacity-80 md:bottom-8"
       >
         ＋
       </Link>
