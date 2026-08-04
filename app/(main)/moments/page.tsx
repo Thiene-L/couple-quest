@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useCallback, useEffect, useMemo, useState } from "react";
+import ReactionBar from "@/components/ReactionBar";
 
 interface MomentItem {
   id: string;
@@ -101,8 +102,27 @@ function StatCard({
 
 export default function MomentsPage() {
   const [data, setData] = useState<MomentsData | null>(null);
+  const [myUserId, setMyUserId] = useState("");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+
+  // 贴表情要知道我是谁：自己的打卡不给自己贴
+  useEffect(() => {
+    let cancelled = false;
+    void (async () => {
+      try {
+        const r = await fetch("/api/auth/me");
+        if (!r.ok) return;
+        const j = (await r.json()) as { user?: { id?: string } };
+        if (!cancelled) setMyUserId(j.user?.id ?? "");
+      } catch {
+        // 拿不到就当没登录信息，表情条退化成只读
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
   const load = useCallback(async () => {
     try {
@@ -278,6 +298,15 @@ export default function MomentsPage() {
                               />
                             </a>
                           )}
+
+                          <div className="mt-3">
+                            <ReactionBar
+                              targetType="completion"
+                              targetId={m.id}
+                              ownerId={m.completedById}
+                              myUserId={myUserId}
+                            />
+                          </div>
                         </article>
                       </div>
                     </li>

@@ -319,6 +319,18 @@ export default function StorePage() {
           )}
         </div>
       </section>
+
+      {/* 猜拳入口 */}
+      <Link
+        href="/duel"
+        className="mt-6 flex items-center justify-between gap-3 rounded-2xl border border-border bg-card p-4 shadow-sm active:opacity-80"
+      >
+        <div>
+          <p className="font-semibold text-foreground">✊ 找 TA 猜拳</p>
+          <p className="mt-0.5 text-xs text-muted">赌点积分，赢了归你</p>
+        </div>
+        <span className="shrink-0 text-sm font-semibold text-primary">去 ›</span>
+      </Link>
     </div>
   );
 }

@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import PasskeyEnrollButton from "@/components/PasskeyEnrollButton";
 import PushEnrollButton from "@/components/PushEnrollButton";
@@ -225,6 +226,27 @@ export default function MePage() {
           <PushEnrollButton />
         </div>
       </div>
+
+      {/* 成就与火花：导航放不下，从这里进 */}
+      <Link
+        href="/achievements"
+        className="mt-6 flex items-center gap-3 rounded-2xl border border-border bg-card p-4 shadow-sm active:opacity-80"
+      >
+        <span aria-hidden className="text-2xl leading-none">
+          🏆
+        </span>
+        <span className="min-w-0 flex-1">
+          <span className="block font-semibold text-foreground">
+            成就与火花
+          </span>
+          <span className="mt-1 block text-sm text-muted">
+            连续打卡天数，和你们已经解锁的成就
+          </span>
+        </span>
+        <span aria-hidden className="text-muted">
+          ›
+        </span>
+      </Link>
 
       {/* 退出登录 */}
       <button

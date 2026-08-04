@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useCallback, useEffect, useRef, useState } from "react";
 import MilestoneBanner from "@/components/MilestoneBanner";
+import PokeButton from "@/components/PokeButton";
 
 interface Me {
   id: string;
@@ -192,15 +193,17 @@ export default function TasksPage() {
   const [me, setMe] = useState<Me | null>(null);
   const [tasks, setTasks] = useState<TaskItem[]>([]);
   const [pending, setPending] = useState<PendingConfirmation[]>([]);
+  const [streakDays, setStreakDays] = useState(0);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [actingId, setActingId] = useState<string | null>(null);
 
   const load = useCallback(async () => {
     try {
-      const [meRes, tasksRes] = await Promise.all([
+      const [meRes, tasksRes, statsRes] = await Promise.all([
         fetch("/api/auth/me"),
         fetch("/api/tasks"),
+        fetch("/api/stats"),
       ]);
       if (meRes.ok) {
         const j = (await meRes.json()) as {
@@ -222,6 +225,13 @@ export default function TasksPage() {
           error?: string;
         } | null;
         setError(j?.error ?? "加载失败，请下拉重试");
+      }
+      // 火花条是锦上添花，拉不到就当没有，不打扰主流程
+      if (statsRes.ok) {
+        const j = (await statsRes.json().catch(() => null)) as {
+          taskStreak?: { current?: number };
+        } | null;
+        setStreakDays(j?.taskStreak?.current ?? 0);
       }
     } catch {
       setError("网络异常，请重试");
@@ -306,6 +316,23 @@ export default function TasksPage() {
       <p className="mt-1 text-sm text-muted">{todayStr}</p>
 
       <MilestoneBanner />
+
+      {/* 火花条：还没开始连续时不显示，别一上来就泼冷水 */}
+      {streakDays > 0 && (
+        <Link
+          href="/achievements"
+          className="mt-2 flex items-center gap-2 rounded-xl border border-border bg-card px-3 py-2 text-sm shadow-sm active:opacity-80"
+        >
+          <span className="font-semibold text-primary">
+            🔥 连续 {streakDays} 天
+          </span>
+          <span className="ml-auto text-xs text-muted">看成就 ›</span>
+        </Link>
+      )}
+
+      <div className="mt-3">
+        <PokeButton />
+      </div>
 
       {error && (
         <div className="mt-4 rounded-xl border border-accent bg-card px-3 py-2 text-sm text-accent">

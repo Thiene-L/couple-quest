@@ -243,6 +243,77 @@ export const dailyAnswers = sqliteTable(
 );
 
 // 定时任务的发送去重：同一天同一类提醒只发一次
+// 戳一下：轻互动，只保留最近的，不做历史
+export const pokes = sqliteTable(
+  "pokes",
+  {
+    id: text("id").primaryKey(),
+    fromUserId: text("from_user_id")
+      .notNull()
+      .references(() => users.id),
+    toUserId: text("to_user_id")
+      .notNull()
+      .references(() => users.id),
+    kind: text("kind").notNull(), // miss / hug / what / kiss / cheer
+    createdAt: integer("created_at", { mode: "timestamp_ms" }).notNull(),
+    seenAt: integer("seen_at", { mode: "timestamp_ms" }),
+  },
+  (t) => [index("pokes_to_idx").on(t.toUserId, t.createdAt)],
+);
+
+// 表情回应：贴在打卡记录或每日答案上
+export const reactions = sqliteTable(
+  "reactions",
+  {
+    id: text("id").primaryKey(),
+    userId: text("user_id")
+      .notNull()
+      .references(() => users.id),
+    targetType: text("target_type", {
+      enum: ["completion", "answer"],
+    }).notNull(),
+    targetId: text("target_id").notNull(),
+    emoji: text("emoji").notNull(),
+    createdAt: integer("created_at", { mode: "timestamp_ms" }).notNull(),
+  },
+  (t) => [
+    index("reactions_target_idx").on(t.targetType, t.targetId),
+    // 同一个人对同一目标只留一个表情，再点是换不是叠
+    uniqueIndex("reactions_one_per_user").on(
+      t.userId,
+      t.targetType,
+      t.targetId,
+    ),
+  ],
+);
+
+// 双人对战：发起方出招后等对方应战，都出招才结算
+export const duels = sqliteTable(
+  "duels",
+  {
+    id: text("id").primaryKey(),
+    challengerId: text("challenger_id")
+      .notNull()
+      .references(() => users.id),
+    opponentId: text("opponent_id")
+      .notNull()
+      .references(() => users.id),
+    game: text("game", { enum: ["rps"] }).notNull(),
+    stake: integer("stake").notNull(), // 赌注积分，0 表示只玩不赌
+    challengerMove: text("challenger_move").notNull(),
+    opponentMove: text("opponent_move"),
+    // pending=等应战 settled=已结算 cancelled=发起方撤回
+    status: text("status", { enum: ["pending", "settled", "cancelled"] })
+      .notNull()
+      .default("pending"),
+    // challenger / opponent / draw
+    winner: text("winner"),
+    createdAt: integer("created_at", { mode: "timestamp_ms" }).notNull(),
+    settledAt: integer("settled_at", { mode: "timestamp_ms" }),
+  },
+  (t) => [index("duels_status_idx").on(t.status, t.createdAt)],
+);
+
 export const reminderLog = sqliteTable("reminder_log", {
   key: text("key").primaryKey(), // 形如 daily-task:{userId}:{dayKey}
   sentAt: integer("sent_at", { mode: "timestamp_ms" }).notNull(),
